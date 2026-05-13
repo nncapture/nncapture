@@ -1,24 +1,49 @@
-from flask import Flask, render_template
+from flask import Flask, render_template, request, redirect
+from flask_sqlalchemy import SQLAlchemy
 import os
 
 app = Flask(__name__)
 
+# DATABASE
+app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///testimonials.db'
+app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
+
+db = SQLAlchemy(app)
+
+# MODEL TESTIMONIAL
+class Testimonial(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+
+    name = db.Column(
+        db.String(100),
+        nullable=False
+    )
+
+    message = db.Column(
+        db.Text,
+        nullable=False
+    )
+
+# PORTFOLIO
 portfolio = {
     "portrait": [
         {"file": "portrait/foto1.jpg", "title": "Portrait Session", "desc": "Personal & Cosplay"},
         {"file": "portrait/foto2.jpg", "title": "Character Portrait", "desc": "Cosplay Photography"},
         {"file": "portrait/foto3.jpg", "title": "Lifestyle Portrait", "desc": "Personal Branding"},
     ],
+
     "headshot": [
         {"file": "headshot/foto1.jpg", "title": "Headshot Profesional", "desc": "Untuk Flyer & Poster"},
         {"file": "headshot/foto2.jpg", "title": "Team Headshot", "desc": "Dokumentasi Tim"},
         {"file": "headshot/foto3.jpg", "title": "Individual Headshot", "desc": "Keperluan Promosi"},
     ],
+
     "sports": [
         {"file": "sports/foto1.jpg", "title": "Action Shot", "desc": "Sports Photography"},
         {"file": "sports/foto2.jpg", "title": "Team Documentation", "desc": "Foto Tim Olahraga"},
         {"file": "sports/foto3.jpg", "title": "Tournament Moment", "desc": "Dokumentasi Turnamen"},
     ],
+
     "event": [
         {"file": "event/foto1.jpg", "title": "Event Documentation", "desc": "Seminar & Gathering"},
         {"file": "event/foto2.jpg", "title": "Community Event", "desc": "Acara Komunitas"},
@@ -26,6 +51,7 @@ portfolio = {
     ],
 }
 
+# SERVICES
 services = [
     {
         "icon": "fas fa-user",
@@ -34,6 +60,7 @@ services = [
         "price": "Rp 75.000",
         "unit": "/ 1 jam",
     },
+
     {
         "icon": "fas fa-id-card",
         "title": "Headshot Individu",
@@ -41,6 +68,7 @@ services = [
         "price": "Rp 30.000",
         "unit": "/ orang",
     },
+
     {
         "icon": "fas fa-running",
         "title": "Sports Photography",
@@ -48,6 +76,7 @@ services = [
         "price": "Mulai Rp 200.000",
         "unit": "/ sesi",
     },
+
     {
         "icon": "fas fa-camera",
         "title": "Event & Dokumentasi",
@@ -57,26 +86,14 @@ services = [
     },
 ]
 
-testimonials = [
-    {
-        "name": "Rizky A.",
-        "role": "Ketua Komunitas Cosplay Lampung",
-        "text": "Hasil fotonya luar biasa! Paham banget cara mengambil angle yang pas untuk kostum cosplay. Sudah beberapa kali pakai jasa N&N Capture dan selalu puas.",
-    },
-    {
-        "name": "Coach Hendra",
-        "role": "Pelatih Tim Futsal",
-        "text": "Dokumentasi turnamen kami jadi jauh lebih profesional. Foto aksi pemain ditangkap dengan sempurna, timing-nya tepat banget.",
-    },
-    {
-        "name": "Panitia Event BEM",
-        "role": "Universitas Lampung",
-        "text": "Responsif, tepat waktu, dan hasil foto berkualitas tinggi. Sangat direkomendasikan untuk dokumentasi event kampus.",
-    },
-]
-
+# HOME
 @app.route("/")
 def index():
+
+    testimonials = Testimonial.query.order_by(
+        Testimonial.id.desc()
+    ).all()
+
     return render_template(
         "index.html",
         portfolio=portfolio,
@@ -84,5 +101,30 @@ def index():
         testimonials=testimonials,
     )
 
+# ADD TESTIMONIAL
+@app.route("/add-testimonial", methods=["POST"])
+def add_testimonial():
+
+    name = request.form.get("name")
+    message = request.form.get("message")
+
+    if not name or not message:
+        return redirect("/")
+
+    new_testimonial = Testimonial(
+        name=name,
+        message=message
+    )
+
+    db.session.add(new_testimonial)
+    db.session.commit()
+
+    return redirect("/#testimonials")
+
+# CREATE DATABASE
+with app.app_context():
+    db.create_all()
+
+# RUN APP
 if __name__ == "__main__":
     app.run(debug=True)

@@ -57,3 +57,41 @@ document.getElementById('contactForm').addEventListener('submit', function(e) {
   const url = `https://wa.me/6285709799920?text=${encodeURIComponent(text)}`;
   window.open(url, '_blank');
 });
+// TESTIMONIAL FORM
+const testimonialForm = document.getElementById('testimonialForm');
+
+if (testimonialForm) {
+
+  testimonialForm.addEventListener('submit', function(e) {
+
+    const name = this
+      .querySelector('input[name="name"]')
+      .value
+      .trim();
+
+    const message = this
+      .querySelector('textarea[name="message"]')
+      .value
+      .trim();
+
+    if (name.length < 2) {
+
+      e.preventDefault();
+
+      alert('Nama terlalu pendek');
+
+      return;
+    }
+
+    if (message.length < 10) {
+
+      e.preventDefault();
+
+      alert('Testimonial terlalu pendek');
+
+      return;
+    }
+
+  });
+
+}

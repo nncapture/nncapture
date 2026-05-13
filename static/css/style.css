@@ -415,3 +415,91 @@ button { cursor: pointer; border: none; background: none; font-family: inherit; 
   .testi-grid { grid-template-columns: 1fr; }
   .why-grid { grid-template-columns: 1fr; }
 }
+/* ===== TESTIMONIAL FORM ===== */
+
+.testi-form-wrap {
+  margin-top: 4rem;
+  max-width: 700px;
+  margin-inline: auto;
+
+  background: var(--dark2);
+  border: 1px solid rgba(201,168,76,0.12);
+
+  padding: 2.5rem;
+}
+
+.testi-form-title {
+  text-align: center;
+  margin-bottom: 2rem;
+}
+
+.testi-form-title h3 {
+  font-family: var(--font-display);
+  font-size: 2rem;
+  font-weight: 400;
+  color: var(--cream);
+  margin-bottom: 0.5rem;
+}
+
+.testi-form-title p {
+  color: rgba(245,240,232,0.6);
+  font-size: 0.9rem;
+}
+
+.testi-form .form-group {
+  margin-bottom: 1.25rem;
+}
+
+.testi-form input,
+.testi-form textarea {
+  width: 100%;
+
+  background: rgba(255,255,255,0.04);
+
+  border: 1px solid rgba(245,240,232,0.1);
+
+  color: var(--cream);
+
+  padding: 1rem;
+
+  font-family: var(--font-body);
+
+  outline: none;
+
+  transition: border-color 0.3s ease;
+}
+
+.testi-form input:focus,
+.testi-form textarea:focus {
+  border-color: var(--gold);
+}
+
+.testi-form textarea {
+  min-height: 140px;
+  resize: vertical;
+}
+
+.testi-submit {
+  width: 100%;
+
+  background: var(--gold);
+
+  color: var(--black);
+
+  padding: 1rem;
+
+  font-size: 0.78rem;
+
+  letter-spacing: 1.5px;
+
+  text-transform: uppercase;
+
+  font-weight: 600;
+
+  transition: var(--transition);
+}
+
+.testi-submit:hover {
+  background: var(--gold2);
+  transform: translateY(-2px);
+}

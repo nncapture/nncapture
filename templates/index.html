@@ -196,29 +196,98 @@
   </section>
 
   <!-- TESTIMONIALS -->
-  <section class="testimonials" id="testimonials">
-    <div class="container">
-      <div class="section-header">
-        <p class="section-eyebrow">Kata Mereka</p>
-        <h2 class="section-title">Testimoni Klien</h2>
-      </div>
-      <div class="testi-grid">
-        {% for t in testimonials %}
-        <div class="testi-card">
-          <div class="testi-quote"><i class="fas fa-quote-left"></i></div>
-          <p class="testi-text">{{ t.text }}</p>
-          <div class="testi-author">
-            <div class="testi-avatar">{{ t.name[0] }}</div>
-            <div>
-              <strong>{{ t.name }}</strong>
-              <span>{{ t.role }}</span>
-            </div>
-          </div>
-        </div>
-        {% endfor %}
-      </div>
+<section class="testimonials" id="testimonials">
+  <div class="container">
+
+    <div class="section-header">
+      <p class="section-eyebrow">Kata Mereka</p>
+      <h2 class="section-title">Testimoni Klien</h2>
     </div>
-  </section>
+
+    <div class="testi-grid">
+
+      {% for t in testimonials %}
+      <div class="testi-card">
+
+        <div class="testi-quote">
+          <i class="fas fa-quote-left"></i>
+        </div>
+
+        <p class="testi-text">
+          {{ t.message }}
+        </p>
+
+        <div class="testi-author">
+
+          <div class="testi-avatar">
+            {{ t.name[0] }}
+          </div>
+
+          <div>
+            <strong>{{ t.name }}</strong>
+            <span>Client</span>
+          </div>
+
+        </div>
+
+      </div>
+      {% endfor %}
+
+    </div>
+
+    <!-- FORM TESTIMONIAL -->
+    <div class="testi-form-wrap">
+
+      <div class="testi-form-title">
+        <h3>Bagikan Pengalaman Anda</h3>
+
+        <p>
+          Kepuasan Anda sangat berarti bagi kami.
+        </p>
+      </div>
+
+      <form
+        action="/add-testimonial"
+        method="POST"
+        class="testi-form"
+        id="testimonialForm"
+      >
+
+        <div class="form-group">
+
+          <label>Nama Anda</label>
+
+          <input
+            type="text"
+            name="name"
+            placeholder="Masukkan nama Anda"
+            required
+          >
+
+        </div>
+
+        <div class="form-group">
+
+          <label>Testimonial</label>
+
+          <textarea
+            name="message"
+            placeholder="Tulis pengalaman Anda menggunakan jasa kami..."
+            required
+          ></textarea>
+
+        </div>
+
+        <button type="submit" class="testi-submit">
+          Kirim Testimonial
+        </button>
+
+      </form>
+
+    </div>
+
+  </div>
+</section>
 
   <!-- CONTACT -->
   <section class="contact" id="contact">
