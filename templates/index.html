@@ -83,34 +83,97 @@
   </section>
 
   <!-- ABOUT -->
-  <section class="about" id="about">
-    <div class="container about-grid">
-      <div class="about-img-wrap">
-        <div class="about-img-frame">
-          <img src="{{ url_for('static', filename='images/logo(putih).png') }}" alt="N&N Capture Photographer" class="about-img" onerror="this.parentElement.classList.add('no-img')" />
-          <div class="about-img-placeholder"><i class="fas fa-camera"></i></div>
+<section class="about" id="about">
+
+  <div class="container about-grid">
+
+    <!-- IMAGE -->
+    <div class="about-img-wrap">
+
+      <div class="about-img-frame">
+
+        <img
+          src="{{ url_for('static', filename='images/logo-putih.png') }}"
+          alt="N&N Capture Photographer"
+          class="about-img"
+          onerror="this.parentElement.classList.add('no-img')"
+        />
+
+        <div class="about-img-placeholder">
+          <i class="fas fa-camera"></i>
         </div>
-        <div class="about-badge">
-          <i class="fas fa-award"></i>
-          <span>Bandar Lampung</span>
-        </div>
+
       </div>
-      <div class="about-text">
-        <p class="section-eyebrow">Tentang Kami</p>
-        <h2 class="section-title">Fotografer yang<br /><em>Memahami Momen</em></h2>
-        <p>N&N Capture hadir sebagai solusi kebutuhan fotografi profesional di Bandar Lampung. Dengan pemahaman mendalam tentang pencahayaan, komposisi, dan angle — setiap gambar yang dihasilkan bukan sekadar foto, melainkan sebuah cerita visual.</p>
-        <p>Kami melayani berbagai kebutuhan, mulai dari dokumentasi event komunitas, aksi olahraga yang dinamis, portrait personal, cosplay, hingga headshot profesional untuk tim dan individu.</p>
-        <p>Kepercayaan klien adalah prioritas utama kami. Setiap sesi dikerjakan dengan serius, penuh dedikasi, dan hasil dikirimkan tepat waktu.</p>
-        <div class="about-tags">
-          <span>Event</span>
-          <span>Sports</span>
-          <span>Portrait</span>
-          <span>Cosplay</span>
-          <span>Headshot</span>
-        </div>
+
+      <!-- BADGE -->
+      <div class="about-badge">
+
+        <i class="fas fa-award"></i>
+
+        <span>
+          Bandar Lampung
+        </span>
+
       </div>
+
     </div>
-  </section>
+
+    <!-- TEXT -->
+    <div class="about-text">
+
+      <p class="section-eyebrow">
+        Tentang Kami
+      </p>
+
+      <h2 class="section-title">
+        Fotografer yang
+        <br />
+        <em>Memahami Momen</em>
+      </h2>
+
+      <p>
+        N&N Capture hadir sebagai solusi kebutuhan fotografi profesional di Bandar Lampung.
+        Dengan pemahaman mendalam tentang pencahayaan, komposisi, dan angle,
+        setiap gambar yang dihasilkan bukan sekadar foto,
+        melainkan sebuah cerita visual.
+      </p>
+
+      <p>
+        Kami melayani berbagai kebutuhan,
+        mulai dari dokumentasi event komunitas,
+        aksi olahraga yang dinamis,
+        portrait personal,
+        cosplay,
+        hingga headshot profesional untuk tim dan individu.
+      </p>
+
+      <p>
+        Kepercayaan klien adalah prioritas utama kami.
+        Setiap sesi dikerjakan dengan serius,
+        penuh dedikasi,
+        dan hasil dikirimkan tepat waktu.
+      </p>
+
+      <!-- TAG -->
+      <div class="about-tags">
+
+        <span>Event</span>
+
+        <span>Sports</span>
+
+        <span>Portrait</span>
+
+        <span>Cosplay</span>
+
+        <span>Headshot</span>
+
+      </div>
+
+    </div>
+
+  </div>
+
+</section>
 
 <!-- PORTFOLIO -->
 <section class="portfolio" id="portfolio">
