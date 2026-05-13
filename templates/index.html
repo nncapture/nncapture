@@ -1,0 +1,300 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>N&N Capture — Photography Bandar Lampung</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400&family=Jost:wght@300;400;500&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}" />
+</head>
+<body>
+
+  <!-- NAV -->
+  <nav class="nav" id="navbar">
+    <div class="nav-inner">
+      <a href="#" class="nav-logo">N<span>&</span>N <em>Capture</em></a>
+      <ul class="nav-links">
+        <li><a href="#about">About</a></li>
+        <li><a href="#portfolio">Portfolio</a></li>
+        <li><a href="#services">Services</a></li>
+        <li><a href="#testimonials">Testimoni</a></li>
+        <li><a href="#contact" class="nav-cta">Hubungi Kami</a></li>
+      </ul>
+      <button class="hamburger" id="hamburger" aria-label="Menu">
+        <span></span><span></span><span></span>
+      </button>
+    </div>
+  </nav>
+
+  <!-- HERO -->
+  <section class="hero" id="home">
+    <div class="hero-bg"></div>
+    <div class="hero-content">
+      <p class="hero-eyebrow">Photography Service — Bandar Lampung</p>
+      <h1 class="hero-title">Setiap Momen<br /><em>Layak Diabadikan</em></h1>
+      <p class="hero-sub">Jasa fotografi profesional untuk event, portrait, sports, dan headshot di Lampung. Mengabadikan cerita dengan cahaya dan angle yang tepat.</p>
+      <div class="hero-btns">
+        <a href="#portfolio" class="btn btn-primary">Lihat Portfolio</a>
+        <a href="#contact" class="btn btn-ghost">Booking Sekarang</a>
+      </div>
+    </div>
+    <div class="hero-scroll">
+      <span>Scroll</span>
+      <div class="hero-scroll-line"></div>
+    </div>
+  </section>
+
+  <!-- STATS -->
+  <section class="stats">
+    <div class="container">
+      <div class="stats-grid">
+        <div class="stat-item">
+          <span class="stat-num">50<sup>+</sup></span>
+          <span class="stat-label">Klien Puas</span>
+        </div>
+        <div class="stat-item">
+          <span class="stat-num">4</span>
+          <span class="stat-label">Spesialisasi</span>
+        </div>
+        <div class="stat-item">
+          <span class="stat-num">100<sup>%</sup></span>
+          <span class="stat-label">Tepat Waktu</span>
+        </div>
+        <div class="stat-item">
+          <span class="stat-num">∞</span>
+          <span class="stat-label">Dedikasi</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ABOUT -->
+  <section class="about" id="about">
+    <div class="container about-grid">
+      <div class="about-img-wrap">
+        <div class="about-img-frame">
+          <img src="{{ url_for('static', filename='images/profile.jpg') }}" alt="N&N Capture Photographer" class="about-img" onerror="this.parentElement.classList.add('no-img')" />
+          <div class="about-img-placeholder"><i class="fas fa-camera"></i></div>
+        </div>
+        <div class="about-badge">
+          <i class="fas fa-award"></i>
+          <span>Bandar Lampung</span>
+        </div>
+      </div>
+      <div class="about-text">
+        <p class="section-eyebrow">Tentang Kami</p>
+        <h2 class="section-title">Fotografer yang<br /><em>Memahami Momen</em></h2>
+        <p>N&N Capture hadir sebagai solusi kebutuhan fotografi profesional di Bandar Lampung. Dengan pemahaman mendalam tentang pencahayaan, komposisi, dan angle — setiap gambar yang dihasilkan bukan sekadar foto, melainkan sebuah cerita visual.</p>
+        <p>Kami melayani berbagai kebutuhan, mulai dari dokumentasi event komunitas, aksi olahraga yang dinamis, portrait personal, cosplay, hingga headshot profesional untuk tim dan individu.</p>
+        <p>Kepercayaan klien adalah prioritas utama kami. Setiap sesi dikerjakan dengan serius, penuh dedikasi, dan hasil dikirimkan tepat waktu.</p>
+        <div class="about-tags">
+          <span>Event</span>
+          <span>Sports</span>
+          <span>Portrait</span>
+          <span>Cosplay</span>
+          <span>Headshot</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- PORTFOLIO -->
+  <section class="portfolio" id="portfolio">
+    <div class="container">
+      <div class="section-header">
+        <p class="section-eyebrow">Karya Terbaik</p>
+        <h2 class="section-title">Portfolio</h2>
+      </div>
+      <div class="portfolio-tabs">
+        <button class="tab-btn active" data-filter="all">Semua</button>
+        <button class="tab-btn" data-filter="portrait">Portrait</button>
+        <button class="tab-btn" data-filter="headshot">Headshot</button>
+        <button class="tab-btn" data-filter="sports">Sports</button>
+        <button class="tab-btn" data-filter="event">Event</button>
+      </div>
+      <div class="portfolio-grid" id="portfolioGrid">
+        {% for category, items in portfolio.items() %}
+          {% for item in items %}
+          <div class="portfolio-item" data-category="{{ category }}">
+            <div class="portfolio-img-wrap">
+              <img src="{{ url_for('static', filename='images/' + item.file) }}" alt="{{ item.title }}" loading="lazy"
+                onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';" />
+              <div class="portfolio-placeholder" style="display:none;">
+                <i class="fas fa-image"></i>
+                <span>{{ item.title }}</span>
+              </div>
+              <div class="portfolio-overlay">
+                <p class="portfolio-cat">{{ category|capitalize }}</p>
+                <h3>{{ item.title }}</h3>
+                <p>{{ item.desc }}</p>
+              </div>
+            </div>
+          </div>
+          {% endfor %}
+        {% endfor %}
+      </div>
+    </div>
+  </section>
+
+  <!-- SERVICES -->
+  <section class="services" id="services">
+    <div class="container">
+      <div class="section-header">
+        <p class="section-eyebrow">Yang Kami Tawarkan</p>
+        <h2 class="section-title">Layanan & Harga</h2>
+      </div>
+      <div class="services-grid">
+        {% for s in services %}
+        <div class="service-card">
+          <div class="service-icon"><i class="{{ s.icon }}"></i></div>
+          <h3>{{ s.title }}</h3>
+          <p>{{ s.desc }}</p>
+          <div class="service-price">
+            <span class="price-main">{{ s.price }}</span>
+            <span class="price-unit">{{ s.unit }}</span>
+          </div>
+          <a href="#contact" class="service-btn">Pesan Sekarang</a>
+        </div>
+        {% endfor %}
+      </div>
+      <p class="services-note">* Harga dapat disesuaikan dengan kebutuhan. Hubungi kami untuk penawaran khusus.</p>
+    </div>
+  </section>
+
+  <!-- WHY US -->
+  <section class="why">
+    <div class="container">
+      <div class="section-header">
+        <p class="section-eyebrow">Mengapa Memilih Kami</p>
+        <h2 class="section-title">Komitmen Kami<br /><em>Untuk Anda</em></h2>
+      </div>
+      <div class="why-grid">
+        <div class="why-card">
+          <i class="fas fa-eye"></i>
+          <h3>Eye for Detail</h3>
+          <p>Setiap foto diambil dengan perhatian penuh pada komposisi, pencahayaan, dan momen yang tepat.</p>
+        </div>
+        <div class="why-card">
+          <i class="fas fa-clock"></i>
+          <h3>Tepat Waktu</h3>
+          <p>Hasil foto dikirimkan sesuai timeline yang disepakati. Kami menghargai waktu Anda.</p>
+        </div>
+        <div class="why-card">
+          <i class="fas fa-comments"></i>
+          <h3>Komunikatif</h3>
+          <p>Konsultasi gratis sebelum sesi. Kami memastikan hasil sesuai dengan ekspektasi Anda.</p>
+        </div>
+        <div class="why-card">
+          <i class="fas fa-star"></i>
+          <h3>Kualitas Terjamin</h3>
+          <p>Setiap foto melalui proses editing profesional sebelum diserahkan kepada klien.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- TESTIMONIALS -->
+  <section class="testimonials" id="testimonials">
+    <div class="container">
+      <div class="section-header">
+        <p class="section-eyebrow">Kata Mereka</p>
+        <h2 class="section-title">Testimoni Klien</h2>
+      </div>
+      <div class="testi-grid">
+        {% for t in testimonials %}
+        <div class="testi-card">
+          <div class="testi-quote"><i class="fas fa-quote-left"></i></div>
+          <p class="testi-text">{{ t.text }}</p>
+          <div class="testi-author">
+            <div class="testi-avatar">{{ t.name[0] }}</div>
+            <div>
+              <strong>{{ t.name }}</strong>
+              <span>{{ t.role }}</span>
+            </div>
+          </div>
+        </div>
+        {% endfor %}
+      </div>
+    </div>
+  </section>
+
+  <!-- CONTACT -->
+  <section class="contact" id="contact">
+    <div class="container contact-grid">
+      <div class="contact-text">
+        <p class="section-eyebrow">Mari Berkolaborasi</p>
+        <h2 class="section-title">Siap Mengabadikan<br /><em>Momen Anda?</em></h2>
+        <p>Hubungi kami sekarang untuk konsultasi gratis dan penawaran terbaik sesuai kebutuhan Anda.</p>
+        <div class="contact-links">
+          <a href="https://wa.me/6285709799920" class="contact-link" target="_blank">
+            <i class="fab fa-whatsapp"></i>
+            <div>
+              <span>WhatsApp</span>
+              <strong>0857-0979-9920</strong>
+            </div>
+          </a>
+          <a href="https://instagram.com/nncapture.id" class="contact-link" target="_blank">
+            <i class="fab fa-instagram"></i>
+            <div>
+              <span>Instagram</span>
+              <strong>@nncapture.id</strong>
+            </div>
+          </a>
+          <div class="contact-link">
+            <i class="fas fa-map-marker-alt"></i>
+            <div>
+              <span>Lokasi</span>
+              <strong>Bandar Lampung</strong>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="contact-form-wrap">
+        <form class="contact-form" id="contactForm">
+          <div class="form-group">
+            <label>Nama Lengkap</label>
+            <input type="text" placeholder="Masukkan nama Anda" required />
+          </div>
+          <div class="form-group">
+            <label>Nomor WhatsApp</label>
+            <input type="tel" placeholder="08xx-xxxx-xxxx" required />
+          </div>
+          <div class="form-group">
+            <label>Jenis Layanan</label>
+            <select>
+              <option value="">Pilih layanan...</option>
+              <option>Portrait & Cosplay</option>
+              <option>Headshot Individu/Tim</option>
+              <option>Sports Photography</option>
+              <option>Event Half Day</option>
+              <option>Event Full Day</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label>Pesan</label>
+            <textarea placeholder="Ceritakan kebutuhan foto Anda..." rows="4"></textarea>
+          </div>
+          <button type="submit" class="btn btn-primary btn-full">Kirim Pesan via WhatsApp</button>
+        </form>
+      </div>
+    </div>
+  </section>
+
+  <!-- FOOTER -->
+  <footer class="footer">
+    <div class="container footer-inner">
+      <div class="footer-logo">N<span>&</span>N <em>Capture</em></div>
+      <p>Photography Service — Bandar Lampung</p>
+      <div class="footer-socials">
+        <a href="https://wa.me/6285709799920" target="_blank"><i class="fab fa-whatsapp"></i></a>
+        <a href="https://instagram.com/nncapture.id" target="_blank"><i class="fab fa-instagram"></i></a>
+      </div>
+      <p class="footer-copy">&copy; 2025 N&N Capture. All rights reserved.</p>
+    </div>
+  </footer>
+
+  <script src="{{ url_for('static', filename='js/main.js') }}"></script>
+</body>
+</html>
