@@ -1,92 +1,63 @@
-from flask import Flask, render_template, request, redirect
+from flask import Flask, render_template, request, redirect, session, url_for
 from flask_sqlalchemy import SQLAlchemy
+from werkzeug.utils import secure_filename
 import os
 
 app = Flask(__name__)
 
+app.secret_key = "nncapture_secret_key"
+
 # DATABASE
-app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///testimonials.db'
+app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///database.db'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
+
+# UPLOAD
+UPLOAD_FOLDER = 'static/uploads'
+app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
 
 db = SQLAlchemy(app)
 
-# MODEL TESTIMONIAL
+# ======================
+# MODELS
+# ======================
+
 class Testimonial(db.Model):
     id = db.Column(db.Integer, primary_key=True)
+    name = db.Column(db.String(100), nullable=False)
+    message = db.Column(db.Text, nullable=False)
 
-    name = db.Column(
-        db.String(100),
-        nullable=False
-    )
+class Portfolio(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    title = db.Column(db.String(100))
+    category = db.Column(db.String(100))
+    description = db.Column(db.Text)
+    image = db.Column(db.String(255))
 
-    message = db.Column(
-        db.Text,
-        nullable=False
-    )
+# ======================
+# STATIC SERVICES
+# ======================
 
-# PORTFOLIO
-portfolio = {
-    "portrait": [
-        {"file": "portrait/foto1.jpg", "title": "Portrait Session", "desc": "Personal & Cosplay"},
-        {"file": "portrait/foto2.jpg", "title": "Character Portrait", "desc": "Cosplay Photography"},
-        {"file": "portrait/foto3.jpg", "title": "Lifestyle Portrait", "desc": "Personal Branding"},
-    ],
-
-    "headshot": [
-        {"file": "headshot/foto1.jpg", "title": "Headshot Profesional", "desc": "Untuk Flyer & Poster"},
-        {"file": "headshot/foto2.jpg", "title": "Team Headshot", "desc": "Dokumentasi Tim"},
-        {"file": "headshot/foto3.jpg", "title": "Individual Headshot", "desc": "Keperluan Promosi"},
-    ],
-
-    "sports": [
-        {"file": "sports/foto1.jpg", "title": "Action Shot", "desc": "Sports Photography"},
-        {"file": "sports/foto2.jpg", "title": "Team Documentation", "desc": "Foto Tim Olahraga"},
-        {"file": "sports/foto3.jpg", "title": "Tournament Moment", "desc": "Dokumentasi Turnamen"},
-    ],
-
-    "event": [
-        {"file": "event/foto1.jpg", "title": "Event Documentation", "desc": "Seminar & Gathering"},
-        {"file": "event/foto2.jpg", "title": "Community Event", "desc": "Acara Komunitas"},
-        {"file": "event/foto3.jpg", "title": "Corporate Event", "desc": "Acara Perusahaan"},
-    ],
-}
-
-# SERVICES
 services = [
     {
         "icon": "fas fa-user",
         "title": "Portrait & Cosplay",
-        "desc": "Sesi portrait personal, cosplay, dan lifestyle. Setiap momen diabadikan dengan pencahayaan dan angle terbaik.",
+        "desc": "Sesi portrait personal dan cosplay.",
         "price": "Rp 75.000",
-        "unit": "/ 1 jam",
+        "unit": "/ jam",
     },
-
-    {
-        "icon": "fas fa-id-card",
-        "title": "Headshot Individu",
-        "desc": "Foto headshot profesional untuk kebutuhan flyer, poster, dan promosi tim. Minimum 5 orang.",
-        "price": "Rp 30.000",
-        "unit": "/ orang",
-    },
-
     {
         "icon": "fas fa-running",
         "title": "Sports Photography",
-        "desc": "Dokumentasi aksi olahraga, turnamen, dan foto tim lengkap. Cocok untuk futsal, basket, badminton.",
+        "desc": "Dokumentasi olahraga profesional.",
         "price": "Mulai Rp 200.000",
-        "unit": "/ sesi",
-    },
-
-    {
-        "icon": "fas fa-camera",
-        "title": "Event & Dokumentasi",
-        "desc": "Liputan event seminar, gathering, dan acara komunitas. Tersedia paket half day dan full day.",
-        "price": "Mulai Rp 300.000",
         "unit": "/ sesi",
     },
 ]
 
+# ======================
 # HOME
+# ======================
+
 @app.route("/")
 def index():
 
@@ -94,14 +65,21 @@ def index():
         Testimonial.id.desc()
     ).all()
 
+    portfolios = Portfolio.query.order_by(
+        Portfolio.id.desc()
+    ).all()
+
     return render_template(
         "index.html",
-        portfolio=portfolio,
-        services=services,
         testimonials=testimonials,
+        portfolios=portfolios,
+        services=services
     )
 
+# ======================
 # ADD TESTIMONIAL
+# ======================
+
 @app.route("/add-testimonial", methods=["POST"])
 def add_testimonial():
 
@@ -117,14 +95,74 @@ def add_testimonial():
     )
 
     db.session.add(new_testimonial)
-
     db.session.commit()
 
     return redirect("/#testimonials")
 
+# ======================
+# LOGIN
+# ======================
+
+@app.route("/login", methods=["GET", "POST"])
+def login():
+
+    if request.method == "POST":
+
+        username = request.form.get("username")
+        password = request.form.get("password")
+
+        if username == "admin" and password == "admin123":
+
+            session["admin"] = True
+
+            return redirect("/admin")
+
+    return render_template("login.html")
+
+# ======================
+# LOGOUT
+# ======================
+
+@app.route("/logout")
+def logout():
+
+    session.clear()
+
+    return redirect("/")
+
+# ======================
+# ADMIN PANEL
+# ======================
+
+@app.route("/admin")
+def admin():
+
+    if not session.get("admin"):
+        return redirect("/login")
+
+    testimonials = Testimonial.query.order_by(
+        Testimonial.id.desc()
+    ).all()
+
+    portfolios = Portfolio.query.order_by(
+        Portfolio.id.desc()
+    ).all()
+
+    return render_template(
+        "admin.html",
+        testimonials=testimonials,
+        portfolios=portfolios
+    )
+
+# ======================
 # DELETE TESTIMONIAL
+# ======================
+
 @app.route("/delete-testimonial/<int:id>")
 def delete_testimonial(id):
+
+    if not session.get("admin"):
+        return redirect("/login")
 
     testimonial = Testimonial.query.get_or_404(id)
 
@@ -132,12 +170,80 @@ def delete_testimonial(id):
 
     db.session.commit()
 
-    return redirect("/#testimonials")
+    return redirect("/admin")
 
+# ======================
+# ADD PORTFOLIO
+# ======================
+
+@app.route("/add-portfolio", methods=["POST"])
+def add_portfolio():
+
+    if not session.get("admin"):
+        return redirect("/login")
+
+    title = request.form.get("title")
+    category = request.form.get("category")
+    description = request.form.get("description")
+
+    image = request.files.get("image")
+
+    filename = ""
+
+    if image:
+
+        filename = secure_filename(image.filename)
+
+        os.makedirs(app.config['UPLOAD_FOLDER'], exist_ok=True)
+
+        image.save(
+            os.path.join(
+                app.config['UPLOAD_FOLDER'],
+                filename
+            )
+        )
+
+    new_portfolio = Portfolio(
+        title=title,
+        category=category,
+        description=description,
+        image=filename
+    )
+
+    db.session.add(new_portfolio)
+
+    db.session.commit()
+
+    return redirect("/admin")
+
+# ======================
+# DELETE PORTFOLIO
+# ======================
+
+@app.route("/delete-portfolio/<int:id>")
+def delete_portfolio(id):
+
+    if not session.get("admin"):
+        return redirect("/login")
+
+    portfolio = Portfolio.query.get_or_404(id)
+
+    db.session.delete(portfolio)
+
+    db.session.commit()
+
+    return redirect("/admin")
+
+# ======================
 # CREATE DATABASE
+# ======================
+
 with app.app_context():
     db.create_all()
 
-# RUN APP
+# ======================
+# RUN
+# ======================
+
 if __name__ == "__main__":
     app.run(debug=True)

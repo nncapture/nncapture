@@ -101,42 +101,111 @@
   </section>
 
   <!-- PORTFOLIO -->
-  <section class="portfolio" id="portfolio">
-    <div class="container">
-      <div class="section-header">
-        <p class="section-eyebrow">Karya Terbaik</p>
-        <h2 class="section-title">Portfolio</h2>
-      </div>
-      <div class="portfolio-tabs">
-        <button class="tab-btn active" data-filter="all">Semua</button>
-        <button class="tab-btn" data-filter="portrait">Portrait</button>
-        <button class="tab-btn" data-filter="headshot">Headshot</button>
-        <button class="tab-btn" data-filter="sports">Sports</button>
-        <button class="tab-btn" data-filter="event">Event</button>
-      </div>
-      <div class="portfolio-grid" id="portfolioGrid">
-        {% for category, items in portfolio.items() %}
-          {% for item in items %}
-          <div class="portfolio-item" data-category="{{ category }}">
-            <div class="portfolio-img-wrap">
-              <img src="{{ url_for('static', filename='images/' + item.file) }}" alt="{{ item.title }}" loading="lazy"
-                onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';" />
-              <div class="portfolio-placeholder" style="display:none;">
-                <i class="fas fa-image"></i>
-                <span>{{ item.title }}</span>
-              </div>
-              <div class="portfolio-overlay">
-                <p class="portfolio-cat">{{ category|capitalize }}</p>
-                <h3>{{ item.title }}</h3>
-                <p>{{ item.desc }}</p>
-              </div>
-            </div>
-          </div>
-          {% endfor %}
-        {% endfor %}
-      </div>
+  <!-- PORTFOLIO -->
+<section class="portfolio" id="portfolio">
+
+  <div class="container">
+
+    <div class="section-header">
+
+      <p class="section-eyebrow">
+        Karya Terbaik
+      </p>
+
+      <h2 class="section-title">
+        Portfolio
+      </h2>
+
     </div>
-  </section>
+
+    <!-- FILTER -->
+    <div class="portfolio-tabs">
+
+      <button
+        class="tab-btn active"
+        data-filter="all"
+      >
+        Semua
+      </button>
+
+      <button
+        class="tab-btn"
+        data-filter="portrait"
+      >
+        Portrait
+      </button>
+
+      <button
+        class="tab-btn"
+        data-filter="headshot"
+      >
+        Headshot
+      </button>
+
+      <button
+        class="tab-btn"
+        data-filter="sports"
+      >
+        Sports
+      </button>
+
+      <button
+        class="tab-btn"
+        data-filter="event"
+      >
+        Event
+      </button>
+
+    </div>
+
+    <!-- GRID -->
+    <div
+      class="portfolio-grid"
+      id="portfolioGrid"
+    >
+
+      {% for item in portfolios %}
+
+      <div
+        class="portfolio-item"
+        data-category="{{ item.category }}"
+      >
+
+        <div class="portfolio-img-wrap">
+
+          <img
+            src="{{ url_for('static', filename='uploads/' + item.image) }}"
+            alt="{{ item.title }}"
+            loading="lazy"
+          >
+
+          <div class="portfolio-overlay">
+
+            <p class="portfolio-cat">
+              {{ item.category|capitalize }}
+            </p>
+
+            <h3>
+              {{ item.title }}
+            </h3>
+
+            <p>
+              {{ item.description }}
+            </p>
+
+          </div>
+
+        </div>
+
+      </div>
+
+      {% endfor %}
+
+    </div>
+
+  </div>
+
+</section>
 
   <!-- SERVICES -->
   <section class="services" id="services">

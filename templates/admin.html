@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html>
+<head>
+
+  <title>Admin Panel</title>
+
+  <style>
+
+    body{
+      background:#0f0f0f;
+      color:white;
+      font-family:Arial;
+      padding:40px;
+    }
+
+    h1,h2{
+      margin-bottom:20px;
+    }
+
+    .box{
+      background:#1a1a1a;
+      padding:25px;
+      margin-bottom:30px;
+      border-radius:12px;
+    }
+
+    input,
+    textarea,
+    select{
+      width:100%;
+      padding:12px;
+      margin-bottom:15px;
+      background:#222;
+      border:none;
+      color:white;
+    }
+
+    button{
+      padding:12px 20px;
+      background:gold;
+      border:none;
+      cursor:pointer;
+      font-weight:bold;
+    }
+
+    .item{
+      background:#222;
+      padding:15px;
+      margin-bottom:15px;
+      border-radius:10px;
+    }
+
+    img{
+      width:200px;
+      border-radius:10px;
+      margin-top:10px;
+    }
+
+    a{
+      color:red;
+      text-decoration:none;
+    }
+
+  </style>
+
+</head>
+<body>
+
+<h1>Admin Dashboard</h1>
+
+<a href="/logout">Logout</a>
+
+<div class="box">
+
+  <h2>Tambah Portfolio</h2>
+
+  <form
+    action="/add-portfolio"
+    method="POST"
+    enctype="multipart/form-data"
+  >
+
+    <input
+      type="text"
+      name="title"
+      placeholder="Judul"
+      required
+    >
+
+    <select name="category">
+
+      <option>portrait</option>
+      <option>sports</option>
+      <option>event</option>
+      <option>headshot</option>
+
+    </select>
+
+    <textarea
+      name="description"
+      placeholder="Deskripsi"
+    ></textarea>
+
+    <input
+      type="file"
+      name="image"
+      required
+    >
+
+    <button type="submit">
+      Upload
+    </button>
+
+  </form>
+
+</div>
+
+<div class="box">
+
+  <h2>Portfolio</h2>
+
+  {% for p in portfolios %}
+
+  <div class="item">
+
+    <h3>{{ p.title }}</h3>
+
+    <p>{{ p.description }}</p>
+
+    <img
+      src="{{ url_for('static', filename='uploads/' + p.image) }}"
+    >
+
+    <br><br>
+
+    <a href="/delete-portfolio/{{ p.id }}">
+      Hapus
+    </a>
+
+  </div>
+
+  {% endfor %}
+
+</div>
+
+<div class="box">
+
+  <h2>Testimonials</h2>
+
+  {% for t in testimonials %}
+
+  <div class="item">
+
+    <strong>{{ t.name }}</strong>
+
+    <p>{{ t.message }}</p>
+
+    <a href="/delete-testimonial/{{ t.id }}">
+      Hapus
+    </a>
+
+  </div>
+
+  {% endfor %}
+
+</div>
+
+</body>
+</html>
