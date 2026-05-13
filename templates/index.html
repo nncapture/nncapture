@@ -32,12 +32,6 @@
     Admin
   </a>
 </li>
-
-<li>
-  <a href="#contact" class="nav-cta">
-    Hubungi Kami
-  </a>
-</li>
         <li><a href="#contact" class="nav-cta">Hubungi Kami</a></li>
       </ul>
       <button class="hamburger" id="hamburger" aria-label="Menu">
@@ -118,7 +112,6 @@
     </div>
   </section>
 
-  <!-- PORTFOLIO -->
   <!-- PORTFOLIO -->
 <section class="portfolio" id="portfolio">
 
@@ -274,10 +267,25 @@
           <p>Konsultasi gratis sebelum sesi. Kami memastikan hasil sesuai dengan ekspektasi Anda.</p>
         </div>
         <div class="why-card">
-          <i class="fas fa-star"></i>
-          <h3>Kualitas Terjamin</h3>
-          <p>Setiap foto melalui proses editing profesional sebelum diserahkan kepada klien.</p>
-        </div>
+
+  <div class="why-stars">
+
+    <i class="fas fa-star"></i>
+    <i class="fas fa-star"></i>
+    <i class="fas fa-star"></i>
+    <i class="fas fa-star"></i>
+    <i class="fas fa-star"></i>
+
+  </div>
+
+  <h3>Kualitas Terjamin</h3>
+
+  <p>
+    Setiap foto melalui proses editing profesional
+    sebelum diserahkan kepada klien.
+  </p>
+
+</div>
       </div>
     </div>
   </section>
@@ -339,72 +347,6 @@
       {% endfor %}
 
     </div>
-
-    <!-- FORM TESTIMONIAL -->
-    <div class="testi-form-wrap">
-
-      <div class="testi-form-title">
-
-        <h3>
-          Bagikan Pengalaman Anda
-        </h3>
-
-        <p>
-          Kepuasan Anda sangat berarti bagi kami.
-        </p>
-
-      </div>
-
-      <form
-        action="/add-testimonial"
-        method="POST"
-        class="testi-form"
-        id="testimonialForm"
-      >
-
-        <div class="form-group">
-
-          <label>
-            Nama Anda
-          </label>
-
-          <input
-            type="text"
-            name="name"
-            placeholder="Masukkan nama Anda"
-            required
-          >
-
-        </div>
-
-        <div class="form-group">
-
-          <label>
-            Testimonial
-          </label>
-
-          <textarea
-            name="message"
-            placeholder="Tulis pengalaman Anda menggunakan jasa kami..."
-            required
-          ></textarea>
-
-        </div>
-
-        <button
-          type="submit"
-          class="testi-submit"
-        >
-          Kirim Testimonial
-        </button>
-
-      </form>
-
-    </div>
-
-  </div>
-
-</section>
 
     <!-- FORM -->
     <div class="testi-form-wrap">
