@@ -606,3 +606,61 @@ button { cursor: pointer; border: none; background: none; font-family: inherit; 
   }
 
 }
+/* =========================
+   PORTFOLIO MULTI IMAGE
+========================= */
+
+.portfolio-slider{
+  position:relative;
+  overflow:hidden;
+  border-radius:20px;
+}
+
+.portfolio-slides{
+  display:flex;
+  gap:15px;
+  overflow-x:auto;
+  scroll-behavior:smooth;
+  padding-bottom:10px;
+}
+
+.portfolio-slides::-webkit-scrollbar{
+  height:8px;
+}
+
+.portfolio-slides::-webkit-scrollbar-thumb{
+  background:#c9a227;
+  border-radius:20px;
+}
+
+.portfolio-slide{
+  min-width:320px;
+  flex-shrink:0;
+}
+
+.portfolio-slide img{
+  width:100%;
+  height:420px;
+  object-fit:cover;
+  border-radius:20px;
+  display:block;
+}
+
+.portfolio-count{
+  display:inline-block;
+  margin-top:10px;
+  font-size:13px;
+  color:gold;
+}
+
+.why-stars{
+  display:flex;
+  gap:6px;
+  justify-content:center;
+  margin-bottom:15px;
+}
+
+.why-stars i{
+  color:gold;
+  font-size:18px;
+}

@@ -1,4 +1,4 @@
-from flask import Flask, render_template, request, redirect, session, url_for
+from flask import Flask, render_template, request, redirect, session
 from flask_sqlalchemy import SQLAlchemy
 from werkzeug.utils import secure_filename
 import os
@@ -7,37 +7,96 @@ app = Flask(__name__)
 
 app.secret_key = "nncapture_secret_key"
 
+# ======================
 # DATABASE
+# ======================
+
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///database.db'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 
-# UPLOAD
+db = SQLAlchemy(app)
+
+# ======================
+# UPLOAD FOLDER
+# ======================
+
 UPLOAD_FOLDER = 'static/uploads'
+
 app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
 
-db = SQLAlchemy(app)
+os.makedirs(UPLOAD_FOLDER, exist_ok=True)
 
 # ======================
 # MODELS
 # ======================
 
 class Testimonial(db.Model):
-    id = db.Column(db.Integer, primary_key=True)
-    name = db.Column(db.String(100), nullable=False)
-    message = db.Column(db.Text, nullable=False)
+
+    id = db.Column(
+        db.Integer,
+        primary_key=True
+    )
+
+    name = db.Column(
+        db.String(100),
+        nullable=False
+    )
+
+    message = db.Column(
+        db.Text,
+        nullable=False
+    )
+
 
 class Portfolio(db.Model):
-    id = db.Column(db.Integer, primary_key=True)
-    title = db.Column(db.String(100))
-    category = db.Column(db.String(100))
-    description = db.Column(db.Text)
-    image = db.Column(db.String(255))
+
+    id = db.Column(
+        db.Integer,
+        primary_key=True
+    )
+
+    title = db.Column(
+        db.String(200)
+    )
+
+    category = db.Column(
+        db.String(100)
+    )
+
+    description = db.Column(
+        db.Text
+    )
+
+    images = db.relationship(
+        'PortfolioImage',
+        backref='portfolio',
+        lazy=True,
+        cascade="all, delete"
+    )
+
+
+class PortfolioImage(db.Model):
+
+    id = db.Column(
+        db.Integer,
+        primary_key=True
+    )
+
+    image = db.Column(
+        db.String(300)
+    )
+
+    portfolio_id = db.Column(
+        db.Integer,
+        db.ForeignKey('portfolio.id')
+    )
 
 # ======================
-# STATIC SERVICES
+# SERVICES
 # ======================
 
 services = [
+
     {
         "icon": "fas fa-user",
         "title": "Portrait & Cosplay",
@@ -45,6 +104,15 @@ services = [
         "price": "Rp 75.000",
         "unit": "/ jam",
     },
+
+    {
+        "icon": "fas fa-id-card",
+        "title": "Headshot",
+        "desc": "Foto headshot profesional.",
+        "price": "Rp 30.000",
+        "unit": "/ orang",
+    },
+
     {
         "icon": "fas fa-running",
         "title": "Sports Photography",
@@ -52,6 +120,15 @@ services = [
         "price": "Mulai Rp 200.000",
         "unit": "/ sesi",
     },
+
+    {
+        "icon": "fas fa-camera",
+        "title": "Event Documentation",
+        "desc": "Dokumentasi acara dan event.",
+        "price": "Mulai Rp 300.000",
+        "unit": "/ sesi",
+    },
+
 ]
 
 # ======================
@@ -75,29 +152,6 @@ def index():
         portfolios=portfolios,
         services=services
     )
-
-# ======================
-# ADD TESTIMONIAL
-# ======================
-
-@app.route("/add-testimonial", methods=["POST"])
-def add_testimonial():
-
-    name = request.form.get("name")
-    message = request.form.get("message")
-
-    if not name or not message:
-        return redirect("/")
-
-    new_testimonial = Testimonial(
-        name=name,
-        message=message
-    )
-
-    db.session.add(new_testimonial)
-    db.session.commit()
-
-    return redirect("/#testimonials")
 
 # ======================
 # LOGIN
@@ -155,6 +209,30 @@ def admin():
     )
 
 # ======================
+# ADD TESTIMONIAL
+# ======================
+
+@app.route("/add-testimonial", methods=["POST"])
+def add_testimonial():
+
+    name = request.form.get("name")
+    message = request.form.get("message")
+
+    if not name or not message:
+        return redirect("/")
+
+    testimonial = Testimonial(
+        name=name,
+        message=message
+    )
+
+    db.session.add(testimonial)
+
+    db.session.commit()
+
+    return redirect("/#testimonials")
+
+# ======================
 # DELETE TESTIMONIAL
 # ======================
 
@@ -186,31 +264,43 @@ def add_portfolio():
     category = request.form.get("category")
     description = request.form.get("description")
 
-    image = request.files.get("image")
+    files = request.files.getlist("images")
 
-    filename = ""
+    if not title or not files:
+        return redirect("/admin")
 
-    if image:
-
-        filename = secure_filename(image.filename)
-
-        os.makedirs(app.config['UPLOAD_FOLDER'], exist_ok=True)
-
-        image.save(
-            os.path.join(
-                app.config['UPLOAD_FOLDER'],
-                filename
-            )
-        )
-
-    new_portfolio = Portfolio(
+    # CREATE PORTFOLIO
+    portfolio = Portfolio(
         title=title,
         category=category,
-        description=description,
-        image=filename
+        description=description
     )
 
-    db.session.add(new_portfolio)
+    db.session.add(portfolio)
+
+    db.session.commit()
+
+    # SAVE MULTIPLE IMAGES
+    for file in files:
+
+        if file.filename == "":
+            continue
+
+        filename = secure_filename(file.filename)
+
+        filepath = os.path.join(
+            app.config['UPLOAD_FOLDER'],
+            filename
+        )
+
+        file.save(filepath)
+
+        image = PortfolioImage(
+            image=filename,
+            portfolio_id=portfolio.id
+        )
+
+        db.session.add(image)
 
     db.session.commit()
 
@@ -227,6 +317,17 @@ def delete_portfolio(id):
         return redirect("/login")
 
     portfolio = Portfolio.query.get_or_404(id)
+
+    # DELETE IMAGE FILES
+    for img in portfolio.images:
+
+        image_path = os.path.join(
+            app.config['UPLOAD_FOLDER'],
+            img.image
+        )
+
+        if os.path.exists(image_path):
+            os.remove(image_path)
 
     db.session.delete(portfolio)
 

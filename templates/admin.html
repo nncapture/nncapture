@@ -1,10 +1,31 @@
 <!DOCTYPE html>
-<html>
+<html lang="id">
+
 <head>
 
-  <title>Admin Panel</title>
+  <meta charset="UTF-8">
+
+  <meta
+    name="viewport"
+    content="width=device-width, initial-scale=1.0"
+  >
+
+  <title>
+    Admin Panel
+  </title>
+
+  <link
+    rel="stylesheet"
+    href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"
+  >
 
   <style>
+
+    *{
+      margin:0;
+      padding:0;
+      box-sizing:border-box;
+    }
 
     body{
       background:#0f0f0f;
@@ -13,157 +34,334 @@
       padding:40px;
     }
 
-    h1,h2{
+    h1,h2,h3{
       margin-bottom:20px;
+    }
+
+    .topbar{
+      display:flex;
+      justify-content:space-between;
+      align-items:center;
+      margin-bottom:40px;
+    }
+
+    .logout{
+      background:#ff4444;
+      color:white;
+      padding:10px 20px;
+      border-radius:8px;
+      text-decoration:none;
     }
 
     .box{
       background:#1a1a1a;
       padding:25px;
-      margin-bottom:30px;
-      border-radius:12px;
+      margin-bottom:35px;
+      border-radius:18px;
+      border:1px solid #2a2a2a;
     }
 
     input,
     textarea,
     select{
       width:100%;
-      padding:12px;
+      padding:14px;
       margin-bottom:15px;
       background:#222;
       border:none;
       color:white;
+      border-radius:10px;
+      outline:none;
+    }
+
+    textarea{
+      min-height:120px;
+      resize:vertical;
     }
 
     button{
-      padding:12px 20px;
+      padding:14px 20px;
       background:gold;
       border:none;
       cursor:pointer;
       font-weight:bold;
+      border-radius:10px;
+      width:100%;
     }
 
     .item{
       background:#222;
-      padding:15px;
-      margin-bottom:15px;
-      border-radius:10px;
+      padding:20px;
+      margin-bottom:20px;
+      border-radius:14px;
     }
 
-    img{
-      width:200px;
-      border-radius:10px;
-      margin-top:10px;
+    .portfolio-images{
+      display:grid;
+      grid-template-columns:repeat(auto-fill,minmax(180px,1fr));
+      gap:15px;
+      margin-top:15px;
     }
 
-    a{
-      color:red;
+    .portfolio-images img{
+      width:100%;
+      height:180px;
+      object-fit:cover;
+      border-radius:12px;
+    }
+
+    .delete-btn{
+      display:inline-block;
+      margin-top:15px;
+      background:#ff4444;
+      color:white;
+      padding:10px 16px;
+      border-radius:8px;
       text-decoration:none;
+    }
+
+    .category{
+      display:inline-block;
+      background:gold;
+      color:black;
+      padding:5px 12px;
+      border-radius:30px;
+      font-size:13px;
+      margin-bottom:12px;
+      font-weight:bold;
+    }
+
+    .section-space{
+      margin-top:50px;
+    }
+
+    .testi-name{
+      font-size:18px;
+      margin-bottom:10px;
+    }
+
+    .testi-msg{
+      opacity:0.8;
+      line-height:1.7;
+    }
+
+    .file-info{
+      margin-bottom:15px;
+      opacity:0.7;
+      font-size:14px;
+    }
+
+    @media(max-width:768px){
+
+      body{
+        padding:20px;
+      }
+
+      .topbar{
+        flex-direction:column;
+        gap:20px;
+        align-items:flex-start;
+      }
+
     }
 
   </style>
 
 </head>
+
 <body>
 
-<h1>Admin Dashboard</h1>
+  <!-- TOPBAR -->
+  <div class="topbar">
 
-<a href="/logout">Logout</a>
+    <div>
 
-<div class="box">
+      <h1>
+        Admin Dashboard
+      </h1>
 
-  <h2>Tambah Portfolio</h2>
+      <p>
+        Manage Portfolio & Testimonials
+      </p>
 
-  <form
-    action="/add-portfolio"
-    method="POST"
-    enctype="multipart/form-data"
-  >
+    </div>
 
-    <input
-      type="text"
-      name="title"
-      placeholder="Judul"
-      required
+    <a
+      href="/logout"
+      class="logout"
     >
-
-    <select name="category">
-
-      <option>portrait</option>
-      <option>sports</option>
-      <option>event</option>
-      <option>headshot</option>
-
-    </select>
-
-    <textarea
-      name="description"
-      placeholder="Deskripsi"
-    ></textarea>
-
-    <input
-      type="file"
-      name="image"
-      required
-    >
-
-    <button type="submit">
-      Upload
-    </button>
-
-  </form>
-
-</div>
-
-<div class="box">
-
-  <h2>Portfolio</h2>
-
-  {% for p in portfolios %}
-
-  <div class="item">
-
-    <h3>{{ p.title }}</h3>
-
-    <p>{{ p.description }}</p>
-
-    <img
-      src="{{ url_for('static', filename='uploads/' + p.image) }}"
-    >
-
-    <br><br>
-
-    <a href="/delete-portfolio/{{ p.id }}">
-      Hapus
+      Logout
     </a>
 
   </div>
 
-  {% endfor %}
+  <!-- ADD PORTFOLIO -->
+  <div class="box">
 
-</div>
+    <h2>
+      Tambah Portfolio
+    </h2>
 
-<div class="box">
+    <form
+      action="/add-portfolio"
+      method="POST"
+      enctype="multipart/form-data"
+    >
 
-  <h2>Testimonials</h2>
+      <input
+        type="text"
+        name="title"
+        placeholder="Judul Portfolio"
+        required
+      >
 
-  {% for t in testimonials %}
+      <select
+        name="category"
+        required
+      >
 
-  <div class="item">
+        <option value="">
+          Pilih Category
+        </option>
 
-    <strong>{{ t.name }}</strong>
+        <option value="portrait">
+          Portrait
+        </option>
 
-    <p>{{ t.message }}</p>
+        <option value="headshot">
+          Headshot
+        </option>
 
-    <a href="/delete-testimonial/{{ t.id }}">
-      Hapus
-    </a>
+        <option value="sports">
+          Sports
+        </option>
+
+        <option value="event">
+          Event
+        </option>
+
+      </select>
+
+      <textarea
+        name="description"
+        placeholder="Deskripsi portfolio..."
+      ></textarea>
+
+      <div class="file-info">
+        Bisa upload banyak gambar sekaligus
+      </div>
+
+      <input
+        type="file"
+        name="images"
+        multiple
+        required
+      >
+
+      <button type="submit">
+
+        <i class="fas fa-upload"></i>
+
+        Upload Portfolio
+
+      </button>
+
+    </form>
 
   </div>
 
-  {% endfor %}
+  <!-- PORTFOLIO -->
+  <div class="box section-space">
 
-</div>
+    <h2>
+      Portfolio
+    </h2>
+
+    {% for p in portfolios %}
+
+    <div class="item">
+
+      <div class="category">
+        {{ p.category }}
+      </div>
+
+      <h3>
+        {{ p.title }}
+      </h3>
+
+      <p>
+        {{ p.description }}
+      </p>
+
+      <!-- MULTIPLE IMAGES -->
+      <div class="portfolio-images">
+
+        {% for image in p.images %}
+
+        <img
+          src="{{ url_for('static', filename='uploads/' + image.image) }}"
+        >
+
+        {% endfor %}
+
+      </div>
+
+      <a
+        href="/delete-portfolio/{{ p.id }}"
+        class="delete-btn"
+      >
+
+        <i class="fas fa-trash"></i>
+
+        Hapus Portfolio
+
+      </a>
+
+    </div>
+
+    {% endfor %}
+
+  </div>
+
+  <!-- TESTIMONIAL -->
+  <div class="box section-space">
+
+    <h2>
+      Testimonials
+    </h2>
+
+    {% for t in testimonials %}
+
+    <div class="item">
+
+      <div class="testi-name">
+
+        <strong>
+          {{ t.name }}
+        </strong>
+
+      </div>
+
+      <div class="testi-msg">
+        {{ t.message }}
+      </div>
+
+      <a
+        href="/delete-testimonial/{{ t.id }}"
+        class="delete-btn"
+      >
+
+        <i class="fas fa-trash"></i>
+
+        Hapus Testimonial
+
+      </a>
+
+    </div>
+
+    {% endfor %}
+
+  </div>
 
 </body>
 </html>
