@@ -117,6 +117,19 @@ def add_testimonial():
     )
 
     db.session.add(new_testimonial)
+
+    db.session.commit()
+
+    return redirect("/#testimonials")
+
+# DELETE TESTIMONIAL
+@app.route("/delete-testimonial/<int:id>")
+def delete_testimonial(id):
+
+    testimonial = Testimonial.query.get_or_404(id)
+
+    db.session.delete(testimonial)
+
     db.session.commit()
 
     return redirect("/#testimonials")

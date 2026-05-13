@@ -236,14 +236,75 @@
     </div>
 
     <!-- FORM TESTIMONIAL -->
+    <!-- TESTIMONIALS -->
+<section class="testimonials" id="testimonials">
+
+  <div class="container">
+
+    <div class="section-header">
+
+      <p class="section-eyebrow">
+        Kata Mereka
+      </p>
+
+      <h2 class="section-title">
+        Testimoni Klien
+      </h2>
+
+    </div>
+
+    <div class="testi-grid">
+
+      {% for t in testimonials %}
+      <div class="testi-card">
+
+        <div class="testi-quote">
+          <i class="fas fa-quote-left"></i>
+        </div>
+
+        <p class="testi-text">
+          {{ t.message }}
+        </p>
+
+        <div class="testi-author">
+
+          <div class="testi-avatar">
+            {{ t.name[0] }}
+          </div>
+
+          <div>
+            <strong>{{ t.name }}</strong>
+            <span>Client</span>
+          </div>
+
+        </div>
+
+        <a
+          href="/delete-testimonial/{{ t.id }}"
+          class="delete-testi"
+          onclick="return confirm('Hapus testimonial ini?')"
+        >
+          Hapus
+        </a>
+
+      </div>
+      {% endfor %}
+
+    </div>
+
+    <!-- FORM -->
     <div class="testi-form-wrap">
 
       <div class="testi-form-title">
-        <h3>Bagikan Pengalaman Anda</h3>
+
+        <h3>
+          Bagikan Pengalaman Anda
+        </h3>
 
         <p>
           Kepuasan Anda sangat berarti bagi kami.
         </p>
+
       </div>
 
       <form
@@ -278,7 +339,10 @@
 
         </div>
 
-        <button type="submit" class="testi-submit">
+        <button
+          type="submit"
+          class="testi-submit"
+        >
           Kirim Testimonial
         </button>
 
@@ -287,6 +351,7 @@
     </div>
 
   </div>
+
 </section>
 
   <!-- CONTACT -->
