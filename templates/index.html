@@ -180,22 +180,19 @@
         data-category="{{ item.category }}"
       >
 
-        <div class="portfolio-slider">
+        
 
           <!-- SLIDES -->
-          <div class="portfolio-slides">
+          <div class="portfolio-slide auto-image">
 
-            {% for image in item.images %}
+  <img
+    class="portfolio-photo"
+    src="{{ url_for('static', filename='uploads/' + image.image) }}"
+    alt="{{ item.title }}"
+    loading="lazy"
+  >
 
-            <div class="portfolio-slide">
-
-              <img
-                src="{{ url_for('static', filename='uploads/' + image.image) }}"
-                alt="{{ item.title }}"
-                loading="lazy"
-              >
-
-            </div>
+</div>
 
             {% endfor %}
 
@@ -221,8 +218,6 @@
             </span>
 
           </div>
-
-        </div>
 
       </div>
 
