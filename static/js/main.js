@@ -95,3 +95,55 @@ if (testimonialForm) {
   });
 
 }
+// PORTFOLIO SLIDER
+document.querySelectorAll('.portfolio-slider').forEach(slider => {
+
+  const slides =
+    slider.querySelector('.portfolio-slides');
+
+  const slide =
+    slider.querySelectorAll('.portfolio-slide');
+
+  const next =
+    slider.querySelector('.next');
+
+  const prev =
+    slider.querySelector('.prev');
+
+  let index = 0;
+
+  if(next){
+
+    next.addEventListener('click', () => {
+
+      index++;
+
+      if(index >= slide.length){
+        index = 0;
+      }
+
+      slides.style.transform =
+        `translateX(-${index * 100}%)`;
+
+    });
+
+  }
+
+  if(prev){
+
+    prev.addEventListener('click', () => {
+
+      index--;
+
+      if(index < 0){
+        index = slide.length - 1;
+      }
+
+      slides.style.transform =
+        `translateX(-${index * 100}%)`;
+
+    });
+
+  }
+
+});

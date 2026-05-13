@@ -112,7 +112,7 @@
     </div>
   </section>
 
-  <!-- PORTFOLIO -->
+ <!-- PORTFOLIO -->
 <section class="portfolio" id="portfolio">
 
   <div class="container">
@@ -182,14 +182,45 @@
         data-category="{{ item.category }}"
       >
 
-        <div class="portfolio-img-wrap">
+        <div class="portfolio-slider">
 
-          <img
-            src="{{ url_for('static', filename='uploads/' + item.image) }}"
-            alt="{{ item.title }}"
-            loading="lazy"
-          >
+          <!-- SLIDES -->
+          <div class="portfolio-slides">
 
+            {% for image in item.images %}
+
+            <div class="portfolio-slide">
+
+              <img
+                src="{{ url_for('static', filename='uploads/' + image.image) }}"
+                alt="{{ item.title }}"
+                loading="lazy"
+              >
+
+            </div>
+
+            {% endfor %}
+
+          </div>
+
+          <!-- BUTTON -->
+          {% if item.images|length > 1 %}
+
+          <button class="slide-btn prev">
+
+            <i class="fas fa-chevron-left"></i>
+
+          </button>
+
+          <button class="slide-btn next">
+
+            <i class="fas fa-chevron-right"></i>
+
+          </button>
+
+          {% endif %}
+
+          <!-- OVERLAY -->
           <div class="portfolio-overlay">
 
             <p class="portfolio-cat">
@@ -203,6 +234,10 @@
             <p>
               {{ item.description }}
             </p>
+
+            <span class="portfolio-count">
+              {{ item.images|length }} Foto
+            </span>
 
           </div>
 

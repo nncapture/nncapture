@@ -540,4 +540,69 @@ button { cursor: pointer; border: none; background: none; font-family: inherit; 
   font-size:14px;
   margin-bottom:12px;
 }
+/* ===== PORTFOLIO MULTI IMAGE ===== */
 
+.portfolio-slider{
+  position:relative;
+  overflow:hidden;
+  border-radius:12px;
+}
+
+.portfolio-slides{
+  display:flex;
+  transition:0.5s;
+}
+
+.portfolio-slide{
+  min-width:100%;
+}
+
+.portfolio-slide img{
+  width:100%;
+  height:420px;
+  object-fit:cover;
+  display:block;
+}
+
+.slide-btn{
+  position:absolute;
+  top:50%;
+  transform:translateY(-50%);
+  width:42px;
+  height:42px;
+  border:none;
+  border-radius:50%;
+  background:rgba(0,0,0,0.5);
+  color:white;
+  z-index:10;
+  cursor:pointer;
+  backdrop-filter:blur(4px);
+  transition:0.3s;
+}
+
+.slide-btn:hover{
+  background:rgba(0,0,0,0.8);
+}
+
+.slide-btn.prev{
+  left:10px;
+}
+
+.slide-btn.next{
+  right:10px;
+}
+
+.portfolio-count{
+  display:inline-block;
+  margin-top:10px;
+  font-size:13px;
+  opacity:0.8;
+}
+
+@media(max-width:768px){
+
+  .portfolio-slide img{
+    height:280px;
+  }
+
+}
