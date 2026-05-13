@@ -551,12 +551,16 @@ button { cursor: pointer; border: none; background: none; font-family: inherit; 
   background: #111;
 }
 
+/* WRAPPER SLIDES */
 .portfolio-slides{
   display: flex;
   gap: 15px;
+
   overflow-x: auto;
   scroll-behavior: smooth;
-  padding-bottom: 10px;
+
+  padding: 10px;
+
   align-items: center;
 }
 
@@ -569,6 +573,7 @@ button { cursor: pointer; border: none; background: none; font-family: inherit; 
   border-radius: 20px;
 }
 
+/* ITEM */
 .portfolio-slide{
   min-width: 320px;
 
@@ -583,8 +588,11 @@ button { cursor: pointer; border: none; background: none; font-family: inherit; 
   border-radius: 20px;
 
   overflow: hidden;
+
+  padding: 10px;
 }
 
+/* IMAGE AUTO FOLLOW */
 .portfolio-slide img{
   width: auto;
   height: auto;
@@ -601,10 +609,12 @@ button { cursor: pointer; border: none; background: none; font-family: inherit; 
   transition: transform 0.4s ease;
 }
 
+/* HOVER */
 .portfolio-slide:hover img{
   transform: scale(1.02);
 }
 
+/* COUNTER */
 .portfolio-count{
   display: inline-block;
   margin-top: 10px;
@@ -612,6 +622,7 @@ button { cursor: pointer; border: none; background: none; font-family: inherit; 
   color: gold;
 }
 
+/* BUTTON */
 .slide-btn{
   position: absolute;
   top: 50%;
@@ -647,10 +658,62 @@ button { cursor: pointer; border: none; background: none; font-family: inherit; 
   right: 10px;
 }
 
+/* ===== GRID IMAGE ===== */
+
+.portfolio-img-wrap{
+  position: relative;
+
+  overflow: hidden;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  background: #111;
+
+  border-radius: 20px;
+
+  padding: 10px;
+
+  min-height: 420px;
+}
+
+.portfolio-img-wrap img{
+  width: auto;
+  height: auto;
+
+  max-width: 100%;
+  max-height: 420px;
+
+  object-fit: contain;
+
+  display: block;
+
+  border-radius: 16px;
+
+  transition: transform 0.6s ease;
+}
+
+.portfolio-item:hover img{
+  transform: scale(1.03);
+}
+
 /* MOBILE */
 @media(max-width:768px){
 
+  .portfolio-slide{
+    min-width: 260px;
+  }
+
   .portfolio-slide img{
+    max-height: 280px;
+  }
+
+  .portfolio-img-wrap{
+    min-height: 280px;
+  }
+
+  .portfolio-img-wrap img{
     max-height: 280px;
   }
 
