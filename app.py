@@ -11,7 +11,10 @@ app.secret_key = "nncapture_secret_key"
 # DATABASE
 # ======================
 
-app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///database.db'
+basedir = os.path.abspath(os.path.dirname(__file__))
+
+app.config['SQLALCHEMY_DATABASE_URI'] = \
+    'sqlite:///' + os.path.join(basedir, 'database.db')
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 
 db = SQLAlchemy(app)
@@ -347,4 +350,9 @@ with app.app_context():
 # ======================
 
 if __name__ == "__main__":
-    app.run(debug=True)
+    port = int(os.environ.get("PORT", 10000))
+    app.run(
+        host="0.0.0.0",
+        port=port,
+        debug=False
+    )
