@@ -112,7 +112,7 @@
     </div>
   </section>
 
- <!-- PORTFOLIO -->
+<!-- PORTFOLIO -->
 <section class="portfolio" id="portfolio">
 
   <div class="container">
@@ -180,19 +180,32 @@
         data-category="{{ item.category }}"
       >
 
-        
+        <div class="portfolio-slider">
+
+          <!-- BUTTON -->
+          <button class="slide-btn prev">
+            <i class="fas fa-chevron-left"></i>
+          </button>
+
+          <button class="slide-btn next">
+            <i class="fas fa-chevron-right"></i>
+          </button>
 
           <!-- SLIDES -->
-          <div class="portfolio-slide auto-image">
+          <div class="portfolio-slides">
 
-  <img
-    class="portfolio-photo"
-    src="{{ url_for('static', filename='uploads/' + image.image) }}"
-    alt="{{ item.title }}"
-    loading="lazy"
-  >
+            {% for image in item.images %}
 
-</div>
+            <div class="portfolio-slide">
+
+              <img
+                class="portfolio-photo"
+                src="{{ url_for('static', filename='uploads/' + image.image) }}"
+                alt="{{ item.title }}"
+                loading="lazy"
+              >
+
+            </div>
 
             {% endfor %}
 
@@ -218,6 +231,8 @@
             </span>
 
           </div>
+
+        </div>
 
       </div>
 

@@ -95,55 +95,84 @@ if (testimonialForm) {
   });
 
 }
-// PORTFOLIO SLIDER
-document.querySelectorAll('.portfolio-slider').forEach(slider => {
+// PORTFOLIO AUTO SCROLL
 
-  const slides =
-    slider.querySelector('.portfolio-slides');
+document.querySelectorAll('.portfolio-slides').forEach(slides => {
 
-  const slide =
-    slider.querySelectorAll('.portfolio-slide');
+  let isDown = false;
 
-  const next =
-    slider.querySelector('.next');
+  let startX;
 
-  const prev =
-    slider.querySelector('.prev');
+  let scrollLeft;
 
-  let index = 0;
+  // DRAG DESKTOP
 
-  if(next){
+  slides.addEventListener('mousedown', (e) => {
 
-    next.addEventListener('click', () => {
+    isDown = true;
 
-      index++;
+    startX = e.pageX - slides.offsetLeft;
 
-      if(index >= slide.length){
-        index = 0;
+    scrollLeft = slides.scrollLeft;
+
+  });
+
+  slides.addEventListener('mouseleave', () => {
+    isDown = false;
+  });
+
+  slides.addEventListener('mouseup', () => {
+    isDown = false;
+  });
+
+  slides.addEventListener('mousemove', (e) => {
+
+    if(!isDown) return;
+
+    e.preventDefault();
+
+    const x = e.pageX - slides.offsetLeft;
+
+    const walk = (x - startX) * 1.5;
+
+    slides.scrollLeft = scrollLeft - walk;
+
+  });
+
+  // TOUCH MOBILE
+
+  let autoScroll = setInterval(() => {
+
+    slides.scrollLeft += 1;
+
+    if(
+      slides.scrollLeft + slides.clientWidth >=
+      slides.scrollWidth
+    ){
+      slides.scrollLeft = 0;
+    }
+
+  }, 25);
+
+  slides.addEventListener('mouseenter', () => {
+    clearInterval(autoScroll);
+  });
+
+  slides.addEventListener('mouseleave', () => {
+
+    autoScroll = setInterval(() => {
+
+      slides.scrollLeft += 1;
+
+      if(
+        slides.scrollLeft + slides.clientWidth >=
+        slides.scrollWidth
+      ){
+        slides.scrollLeft = 0;
       }
 
-      slides.style.transform =
-        `translateX(-${index * 100}%)`;
+    }, 25);
 
-    });
-
-  }
-
-  if(prev){
-
-    prev.addEventListener('click', () => {
-
-      index--;
-
-      if(index < 0){
-        index = slide.length - 1;
-      }
-
-      slides.style.transform =
-        `translateX(-${index * 100}%)`;
-
-    });
-
-  }
+  });
 
 });
