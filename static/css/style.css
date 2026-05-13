@@ -767,3 +767,13 @@ button { cursor: pointer; border: none; background: none; font-family: inherit; 
   }
 
 }
+/* FIX MOBILE AUTO SLIDE */
+
+.portfolio-slides{
+  transform: none !important;
+  transition: none !important;
+}
+
+.portfolio-slide{
+  transform: none !important;
+}

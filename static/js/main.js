@@ -95,7 +95,7 @@ if (testimonialForm) {
   });
 
 }
-// PORTFOLIO AUTO SCROLL
+// PORTFOLIO DRAG SCROLL ONLY
 
 document.querySelectorAll('.portfolio-slides').forEach(slides => {
 
@@ -105,11 +105,13 @@ document.querySelectorAll('.portfolio-slides').forEach(slides => {
 
   let scrollLeft;
 
-  // DRAG DESKTOP
+  // DESKTOP DRAG
 
   slides.addEventListener('mousedown', (e) => {
 
     isDown = true;
+
+    slides.classList.add('dragging');
 
     startX = e.pageX - slides.offsetLeft;
 
@@ -118,16 +120,24 @@ document.querySelectorAll('.portfolio-slides').forEach(slides => {
   });
 
   slides.addEventListener('mouseleave', () => {
+
     isDown = false;
+
+    slides.classList.remove('dragging');
+
   });
 
   slides.addEventListener('mouseup', () => {
+
     isDown = false;
+
+    slides.classList.remove('dragging');
+
   });
 
   slides.addEventListener('mousemove', (e) => {
 
-    if(!isDown) return;
+    if (!isDown) return;
 
     e.preventDefault();
 
@@ -139,39 +149,27 @@ document.querySelectorAll('.portfolio-slides').forEach(slides => {
 
   });
 
-  // TOUCH MOBILE
+  // MOBILE TOUCH SUPPORT
 
-  let autoScroll = setInterval(() => {
+  let touchStartX = 0;
 
-    slides.scrollLeft += 1;
+  let touchScrollLeft = 0;
 
-    if(
-      slides.scrollLeft + slides.clientWidth >=
-      slides.scrollWidth
-    ){
-      slides.scrollLeft = 0;
-    }
+  slides.addEventListener('touchstart', (e) => {
 
-  }, 25);
+    touchStartX = e.touches[0].pageX;
 
-  slides.addEventListener('mouseenter', () => {
-    clearInterval(autoScroll);
+    touchScrollLeft = slides.scrollLeft;
+
   });
 
-  slides.addEventListener('mouseleave', () => {
+  slides.addEventListener('touchmove', (e) => {
 
-    autoScroll = setInterval(() => {
+    const touchX = e.touches[0].pageX;
 
-      slides.scrollLeft += 1;
+    const walk = (touchX - touchStartX) * 1.5;
 
-      if(
-        slides.scrollLeft + slides.clientWidth >=
-        slides.scrollWidth
-      ){
-        slides.scrollLeft = 0;
-      }
-
-    }, 25);
+    slides.scrollLeft = touchScrollLeft - walk;
 
   });
 
