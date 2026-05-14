@@ -120,7 +120,7 @@ services = [
         "icon": "fas fa-running",
         "title": "Sports Photography",
         "desc": "Dokumentasi olahraga profesional.",
-        "price": "Mulai Rp 200.000",
+        "price": "Mulai Rp 150.000",
         "unit": "/ sesi",
     },
 
