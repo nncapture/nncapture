@@ -387,11 +387,18 @@ def delete_portfolio(id):
     return redirect("/admin")
 
 # ======================
-# CREATE DATABASE
+# CREATE DATABASE + MIGRATE
 # ======================
 
 with app.app_context():
     db.create_all()
+    # Auto migrasi kolom orientation kalau belum ada
+    try:
+        with db.engine.connect() as conn:
+            conn.execute(db.text("ALTER TABLE portfolio_image ADD COLUMN orientation VARCHAR(20) DEFAULT 'landscape'"))
+            conn.commit()
+    except Exception:
+        pass  # kolom sudah ada, skip
 
 # ======================
 # RUN
