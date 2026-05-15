@@ -233,11 +233,13 @@ document.querySelectorAll('.portfolio-slides').forEach(slider => {
 
   slider.addEventListener('mouseleave', () => {
 
-    isDown = false;
+  isDown = false;
 
-    slider.classList.remove('active');
+  slider.classList.remove('active');
 
-  });
+  startAutoSlide();
+
+});
 
   slider.addEventListener('mousemove', (e) => {
 

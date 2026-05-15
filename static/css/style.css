@@ -543,159 +543,115 @@ button { cursor: pointer; border: none; background: none; font-family: inherit; 
   margin-bottom:12px;
 }
 /* =========================
-   PORTFOLIO MULTI IMAGE
+   PORTFOLIO SLIDER FIX
 ========================= */
 
 .portfolio-slider{
   position: relative;
   overflow: hidden;
-  border-radius: 20px;
-  background: #111;
+  border-radius: 24px;
+  background: #0f0f0f;
 }
 
-/* WRAPPER SLIDES */
+/* SLIDES */
+
 .portfolio-slides{
+
   display: flex;
-  gap: 15px;
+
+  gap: 18px;
 
   overflow-x: auto;
-  scroll-behavior: smooth;
+  overflow-y: hidden;
 
-  padding: 10px;
-
-  align-items: center;
-
-  scroll-snap-type: x mandatory;
+  padding: 14px;
 
   -webkit-overflow-scrolling: touch;
+
+  scrollbar-width: none;
 
   cursor: grab;
 
   user-select: none;
+
+  touch-action: pan-x;
+
+  scroll-behavior: smooth;
 }
 
-.portfolio-slides:active{
+.portfolio-slides::-webkit-scrollbar{
+  display: none;
+}
+
+.portfolio-slides.active{
   cursor: grabbing;
-}
-.portfolio-slide{
-  scroll-snap-align: center;
-}
-.portfolio-slides::-webkit-scrollbar{
-  display:none;
-}
-
-.portfolio-slides{
-  scrollbar-width:none;
-}
-
-.portfolio-slides::-webkit-scrollbar{
-  height: 8px;
-}
-
-.portfolio-slides::-webkit-scrollbar-thumb{
-  background: #c9a227;
-  border-radius: 20px;
 }
 
 /* ITEM */
+
 .portfolio-slide{
-  min-width: 320px;
 
   flex-shrink: 0;
+
+  border-radius: 22px;
+
+  overflow: hidden;
+
+  background: #111;
 
   display: flex;
   align-items: center;
   justify-content: center;
 
-  background: #111;
-
-  border-radius: 20px;
-
-  overflow: hidden;
-
-  padding: 10px;
+  position: relative;
 }
 
-/* IMAGE AUTO FOLLOW */
+/* PORTRAIT */
+
+.portfolio-slide.portrait{
+
+  width: 340px;
+
+  height: 520px;
+}
+
+/* LANDSCAPE */
+
+.portfolio-slide.landscape{
+
+  width: 760px;
+
+  height: 520px;
+}
+
+/* IMAGE */
+
 .portfolio-slide img{
-  width: auto;
-  height: auto;
 
-  max-width: 100%;
-  max-height: 420px;
+  width: 100%;
+  height: 100%;
 
-  object-fit: contain;
+  object-fit: cover;
 
   display: block;
 
-  border-radius: 20px;
+  pointer-events: none;
 
-  transition: transform 0.4s ease;
+  user-select: none;
+
+  transition: transform .35s ease;
 }
 
-/* HOVER */
 .portfolio-slide:hover img{
   transform: scale(1.02);
 }
 
-/* COUNTER */
-.portfolio-count{
-  display: inline-block;
-  margin-top: 10px;
-  font-size: 13px;
-  color: gold;
-}
-
-.slide-btn:hover{
-  background: rgba(0,0,0,0.8);
-}
-
-.slide-btn.prev{
-  left: 10px;
-}
-
-.slide-btn.next{
-  right: 10px;
-}
-
-/* MOBILE */
-@media(max-width:768px){
-
-  .portfolio-slide{
-    min-width: 260px;
-  }
-
-  .portfolio-slide img{
-    max-height: 280px;
-  }
-
-  .portfolio-img-wrap{
-    min-height: 280px;
-  }
-
-  .portfolio-img-wrap img{
-    max-height: 280px;
-  }
-
-}
-/* =========================
-   FIX PORTFOLIO OVERLAY
-========================= */
-
-.portfolio-slider{
-  position: relative;
-}
+/* OVERLAY */
 
 .portfolio-overlay{
+
   position: absolute;
   inset: 0;
-
-  background: linear-gradient(
-    to top,
-    rgba(0,0,0,0.82),
-    rgba(0,0,0,0.15),
-    transparent
-  );
 
   display: flex;
   flex-direction: column;
@@ -703,11 +659,18 @@ button { cursor: pointer; border: none; background: none; font-family: inherit; 
 
   padding: 2rem;
 
+  border-radius: 24px;
+
+  background: linear-gradient(
+    to top,
+    rgba(0,0,0,.88),
+    rgba(0,0,0,.18),
+    transparent
+  );
+
   opacity: 0;
 
-  transition: 0.4s ease;
-
-  border-radius: 20px;
+  transition: opacity .3s ease;
 
   pointer-events: none;
 }
@@ -722,24 +685,39 @@ button { cursor: pointer; border: none; background: none; font-family: inherit; 
 }
 
 .portfolio-overlay p{
-  max-width: 600px;
-  color: rgba(255,255,255,0.8);
+  color: rgba(255,255,255,.82);
 }
+
+.portfolio-count{
+  margin-top: 10px;
+  color: gold;
+  font-size: 13px;
+}
+
+/* MOBILE */
 
 @media(max-width:768px){
 
+  .portfolio-slide.landscape{
+
+    width: 92vw;
+
+    height: 250px;
+  }
+
+  .portfolio-slide.portrait{
+
+    width: 72vw;
+
+    height: 430px;
+  }
+
   .portfolio-overlay{
     opacity: 1;
-    background: linear-gradient(
-      to top,
-      rgba(0,0,0,0.9),
-      rgba(0,0,0,0.2),
-      transparent
-    );
   }
 
   .portfolio-overlay h3{
-    font-size: 1.4rem;
+    font-size: 1.3rem;
   }
 
 }
