@@ -754,30 +754,36 @@ button { cursor: pointer; border: none; background: none; font-family: inherit; 
   transform: none !important;
 }
 /* =========================
-   ULTRA SMOOTH PORTFOLIO
+   CINEMATIC PORTFOLIO
 ========================= */
 
 .portfolio-slider{
   position: relative;
   overflow: hidden;
+
   border-radius: 24px;
-  background: #111;
+
+  background: #0f0f0f;
 }
 
+/* SLIDES */
+
 .portfolio-slides{
+
   display: flex;
+
   gap: 18px;
 
   overflow-x: auto;
   overflow-y: hidden;
 
-  padding: 10px;
+  padding: 14px;
 
   scroll-snap-type: x mandatory;
 
-  -webkit-overflow-scrolling: touch;
-
   scroll-behavior: smooth;
+
+  -webkit-overflow-scrolling: touch;
 
   scrollbar-width: none;
 
@@ -787,9 +793,11 @@ button { cursor: pointer; border: none; background: none; font-family: inherit; 
 
   touch-action: pan-x;
 
-  will-change: scroll-position;
+  will-change: transform;
 
-  transform: translateZ(0);
+  transform: translate3d(0,0,0);
+
+  backface-visibility: hidden;
 }
 
 .portfolio-slides::-webkit-scrollbar{
@@ -800,8 +808,9 @@ button { cursor: pointer; border: none; background: none; font-family: inherit; 
   cursor: grabbing;
 }
 
+/* ITEM */
+
 .portfolio-slide{
-  min-width: 88%;
 
   flex-shrink: 0;
 
@@ -813,18 +822,41 @@ button { cursor: pointer; border: none; background: none; font-family: inherit; 
 
   background: #111;
 
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
   position: relative;
 
   transform: translateZ(0);
 }
 
+/* PORTRAIT */
+
+.portfolio-slide.portrait{
+
+  width: 340px;
+
+  height: 520px;
+}
+
+/* LANDSCAPE */
+
+.portfolio-slide.landscape{
+
+  width: 760px;
+
+  height: 520px;
+}
+
+/* IMAGE */
+
 .portfolio-slide img{
+
   width: 100%;
-  height: auto;
+  height: 100%;
 
-  max-height: 520px;
-
-  object-fit: contain;
+  object-fit: cover;
 
   display: block;
 
@@ -832,17 +864,20 @@ button { cursor: pointer; border: none; background: none; font-family: inherit; 
 
   user-select: none;
 
-  transition: transform .4s ease;
+  transition: transform .35s ease;
+
+  transform: translateZ(0);
 }
 
 .portfolio-slide:hover img{
-  transform: scale(1.015);
+  transform: scale(1.02);
 }
 
 
 /* OVERLAY */
 
 .portfolio-overlay{
+
   position: absolute;
   inset: 0;
 
@@ -856,14 +891,14 @@ button { cursor: pointer; border: none; background: none; font-family: inherit; 
 
   background: linear-gradient(
     to top,
-    rgba(0,0,0,.82),
+    rgba(0,0,0,.88),
     rgba(0,0,0,.18),
     transparent
   );
 
   opacity: 0;
 
-  transition: opacity .35s ease;
+  transition: opacity .3s ease;
 
   pointer-events: none;
 }
@@ -882,110 +917,36 @@ button { cursor: pointer; border: none; background: none; font-family: inherit; 
 }
 
 .portfolio-count{
-  margin-top: 12px;
-  color: gold;
-  font-size: 13px;
-}
-
-
-/* MOBILE */
-
-@media(max-width:768px){
-
-  .portfolio-slide{
-    min-width: 94%;
-  }
-
-  .portfolio-slide img{
-    max-height: 360px;
-  }
-
-  .portfolio-overlay{
-    opacity: 1;
-  }
-
-  .portfolio-overlay h3{
-    font-size: 1.4rem;
-  }
-
-}
-
-/* OVERLAY */
-
-.portfolio-overlay{
-  position: absolute;
-  inset: 0;
-
-  background: linear-gradient(
-    to top,
-    rgba(0,0,0,0.82),
-    rgba(0,0,0,0.15),
-    transparent
-  );
-
-  display: flex;
-  flex-direction: column;
-  justify-content: flex-end;
-
-  padding: 2rem;
-
-  opacity: 0;
-
-  transition: 0.4s ease;
-
-  border-radius: 20px;
-
-  pointer-events: none;
-}
-
-.portfolio-slider:hover .portfolio-overlay{
-  opacity: 1;
-}
-
-.portfolio-overlay h3{
-  font-size: 2rem;
-  margin-bottom: 10px;
-}
-
-.portfolio-overlay p{
-  max-width: 600px;
-  color: rgba(255,255,255,0.8);
-}
-
-.portfolio-count{
-  display: inline-block;
   margin-top: 10px;
-  font-size: 13px;
   color: gold;
+  font-size: 13px;
 }
+
 
 /* MOBILE */
 
 @media(max-width:768px){
 
-  .portfolio-slide{
-    min-width: 100%;
+  .portfolio-slide.landscape{
+
+    width: 92vw;
+
+    height: 250px;
   }
 
-  .portfolio-slide img{
-    width: 100%;
-    max-height: 350px;
-    object-fit: contain;
+  .portfolio-slide.portrait{
+
+    width: 72vw;
+
+    height: 430px;
   }
 
   .portfolio-overlay{
     opacity: 1;
-
-    background: linear-gradient(
-      to top,
-      rgba(0,0,0,0.9),
-      rgba(0,0,0,0.2),
-      transparent
-    );
   }
 
   .portfolio-overlay h3{
-    font-size: 1.4rem;
+    font-size: 1.3rem;
   }
 
 }

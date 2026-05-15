@@ -331,3 +331,24 @@ document.querySelectorAll('.portfolio-slides').forEach(slider => {
   });
 
 });
+// AUTO DETECT IMAGE ORIENTATION
+
+document.querySelectorAll('.portfolio-slide img').forEach(img => {
+
+  img.onload = () => {
+
+    const slide = img.closest('.portfolio-slide');
+
+    if (img.naturalHeight > img.naturalWidth) {
+
+      slide.classList.add('portrait');
+
+    } else {
+
+      slide.classList.add('landscape');
+
+    }
+
+  };
+
+});
