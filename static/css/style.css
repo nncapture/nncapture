@@ -754,31 +754,32 @@ button { cursor: pointer; border: none; background: none; font-family: inherit; 
   transform: none !important;
 }
 /* =========================
-   PORTFOLIO SWIPE FINAL
+   ULTRA SMOOTH PORTFOLIO
 ========================= */
 
 .portfolio-slider{
   position: relative;
   overflow: hidden;
-  border-radius: 20px;
+  border-radius: 24px;
   background: #111;
 }
 
 .portfolio-slides{
   display: flex;
-  gap: 15px;
+  gap: 18px;
 
   overflow-x: auto;
-
-  scroll-behavior: smooth;
+  overflow-y: hidden;
 
   padding: 10px;
-
-  align-items: center;
 
   scroll-snap-type: x mandatory;
 
   -webkit-overflow-scrolling: touch;
+
+  scroll-behavior: smooth;
+
+  scrollbar-width: none;
 
   cursor: grab;
 
@@ -786,7 +787,9 @@ button { cursor: pointer; border: none; background: none; font-family: inherit; 
 
   touch-action: pan-x;
 
-  scrollbar-width: none;
+  will-change: scroll-position;
+
+  transform: translateZ(0);
 }
 
 .portfolio-slides::-webkit-scrollbar{
@@ -798,45 +801,113 @@ button { cursor: pointer; border: none; background: none; font-family: inherit; 
 }
 
 .portfolio-slide{
-  min-width: 320px;
+  min-width: 88%;
 
   flex-shrink: 0;
 
   scroll-snap-align: center;
 
-  display: flex;
-  align-items: center;
-  justify-content: center;
-
-  background: #111;
-
-  border-radius: 20px;
+  border-radius: 22px;
 
   overflow: hidden;
 
-  user-select: none;
+  background: #111;
+
+  position: relative;
+
+  transform: translateZ(0);
 }
 
 .portfolio-slide img{
-  width: auto;
+  width: 100%;
   height: auto;
 
-  max-width: 100%;
-  max-height: 420px;
+  max-height: 520px;
 
   object-fit: contain;
 
   display: block;
 
-  border-radius: 20px;
-
   pointer-events: none;
 
-  transition: transform 0.4s ease;
+  user-select: none;
+
+  transition: transform .4s ease;
 }
 
 .portfolio-slide:hover img{
-  transform: scale(1.02);
+  transform: scale(1.015);
+}
+
+
+/* OVERLAY */
+
+.portfolio-overlay{
+  position: absolute;
+  inset: 0;
+
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+
+  padding: 2rem;
+
+  border-radius: 24px;
+
+  background: linear-gradient(
+    to top,
+    rgba(0,0,0,.82),
+    rgba(0,0,0,.18),
+    transparent
+  );
+
+  opacity: 0;
+
+  transition: opacity .35s ease;
+
+  pointer-events: none;
+}
+
+.portfolio-slider:hover .portfolio-overlay{
+  opacity: 1;
+}
+
+.portfolio-overlay h3{
+  font-size: 2rem;
+  margin-bottom: 10px;
+}
+
+.portfolio-overlay p{
+  color: rgba(255,255,255,.82);
+}
+
+.portfolio-count{
+  margin-top: 12px;
+  color: gold;
+  font-size: 13px;
+}
+
+
+/* MOBILE */
+
+@media(max-width:768px){
+
+  .portfolio-slide{
+    min-width: 94%;
+  }
+
+  .portfolio-slide img{
+    max-height: 360px;
+  }
+
+  .portfolio-overlay{
+    opacity: 1;
+  }
+
+  .portfolio-overlay h3{
+    font-size: 1.4rem;
+  }
+
 }
 
 /* OVERLAY */
