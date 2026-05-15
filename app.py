@@ -1,11 +1,13 @@
 from flask import Flask, render_template, request, redirect, session
 from flask_sqlalchemy import SQLAlchemy
 from werkzeug.utils import secure_filename
+from PIL import Image
 import os
+import uuid
 
 app = Flask(__name__)
 
-app.secret_key = "nncapture_secret_key"
+app.secret_key = os.environ.get("SECRET_KEY", "nncapture_secret_key")
 
 # ======================
 # DATABASE
@@ -28,6 +30,28 @@ UPLOAD_FOLDER = 'static/uploads'
 app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
 
 os.makedirs(UPLOAD_FOLDER, exist_ok=True)
+
+# ======================
+# ALLOWED EXTENSIONS
+# FIX: hanya gambar yang boleh diupload
+# ======================
+
+ALLOWED_EXTENSIONS = {'jpg', 'jpeg', 'png', 'webp', 'gif'}
+
+def allowed_file(filename):
+    return (
+        '.' in filename and
+        filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
+    )
+
+# ======================
+# ADMIN CREDENTIALS
+# FIX: ambil dari environment variable, fallback ke default
+# Ganti via: export ADMIN_USERNAME=xxx ADMIN_PASSWORD=xxx
+# ======================
+
+ADMIN_USERNAME = os.environ.get("ADMIN_USERNAME", "admin")
+ADMIN_PASSWORD = os.environ.get("ADMIN_PASSWORD", "admin123")
 
 # ======================
 # MODELS
@@ -87,6 +111,12 @@ class PortfolioImage(db.Model):
 
     image = db.Column(
         db.String(300)
+    )
+
+    # FIX: tambah kolom orientation supaya portrait/landscape jalan di HTML
+    orientation = db.Column(
+        db.String(20),
+        default='landscape'
     )
 
     portfolio_id = db.Column(
@@ -158,6 +188,7 @@ def index():
 
 # ======================
 # LOGIN
+# FIX: pakai variabel dari env bukan hardcoded
 # ======================
 
 @app.route("/login", methods=["GET", "POST"])
@@ -168,7 +199,7 @@ def login():
         username = request.form.get("username")
         password = request.form.get("password")
 
-        if username == "admin" and password == "admin123":
+        if username == ADMIN_USERNAME and password == ADMIN_PASSWORD:
 
             session["admin"] = True
 
@@ -255,6 +286,7 @@ def delete_testimonial(id):
 
 # ======================
 # ADD PORTFOLIO
+# FIX: validasi ekstensi + deteksi orientasi otomatis
 # ======================
 
 @app.route("/add-portfolio", methods=["POST"])
@@ -289,7 +321,14 @@ def add_portfolio():
         if file.filename == "":
             continue
 
-        filename = secure_filename(file.filename)
+        # FIX: tolak file yang bukan gambar
+        if not allowed_file(file.filename):
+            continue
+
+        ext = file.filename.rsplit('.', 1)[1].lower()
+
+        # FIX: pakai uuid supaya nama file ga bentrok
+        filename = f"{uuid.uuid4().hex}.{ext}"
 
         filepath = os.path.join(
             app.config['UPLOAD_FOLDER'],
@@ -298,8 +337,17 @@ def add_portfolio():
 
         file.save(filepath)
 
+        # FIX: deteksi orientasi dari dimensi gambar
+        try:
+            with Image.open(filepath) as img:
+                w, h = img.size
+                orientation = 'portrait' if h > w else 'landscape'
+        except Exception:
+            orientation = 'landscape'
+
         image = PortfolioImage(
             image=filename,
+            orientation=orientation,
             portfolio_id=portfolio.id
         )
 

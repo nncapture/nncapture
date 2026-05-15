@@ -164,13 +164,42 @@ if (testimonialForm) {
    PORTFOLIO SLIDER
 ========================= */
 
-document.querySelectorAll('.portfolio-slides').forEach(slider => {
+document.querySelectorAll('.portfolio-slider').forEach(wrapper => {
 
-  let isDown = false;
-  let startX;
-  let scrollLeft;
+  const slider = wrapper.querySelector('.portfolio-slides');
+  const count  = wrapper.querySelector('.portfolio-count');
+  const items  = wrapper.querySelectorAll('.portfolio-slide');
+  const total  = items.length;
 
-  let autoSlide;
+  if (!slider || total === 0) return;
+
+  let current   = 0;
+  let autoTimer = null;
+  let isDown    = false;
+  let startX    = 0;
+  let scrollStart = 0;
+  let touchStartX = 0;
+
+  /* GOTO SLIDE */
+
+  function goTo(index) {
+
+    if (index < 0) index = total - 1;
+    if (index >= total) index = 0;
+
+    current = index;
+
+    const slideWidth = items[0].offsetWidth;
+
+    slider.scrollTo({ left: slideWidth * current, behavior: 'smooth' });
+
+    if (count) count.textContent = `${current + 1} / ${total}`;
+
+  }
+
+  function next() { goTo(current + 1); }
+  function prev() { goTo(current - 1); }
+
 
   /* AUTO SLIDE */
 
@@ -178,31 +207,15 @@ document.querySelectorAll('.portfolio-slides').forEach(slider => {
 
     stopAutoSlide();
 
-    autoSlide = setInterval(() => {
-
-      slider.scrollLeft += 1;
-
-      // RESET KE AWAL
-      if (
-        slider.scrollLeft >=
-        slider.scrollWidth - slider.clientWidth
-      ) {
-
-        slider.scrollLeft = 0;
-
-      }
-
-    }, 15);
+    autoTimer = setInterval(next, 4000);
 
   }
 
   function stopAutoSlide() {
 
-    clearInterval(autoSlide);
+    clearInterval(autoTimer);
 
   }
-
-  startAutoSlide();
 
 
   /* DESKTOP DRAG */
@@ -211,35 +224,15 @@ document.querySelectorAll('.portfolio-slides').forEach(slider => {
 
     isDown = true;
 
+    startX = e.pageX;
+
+    scrollStart = slider.scrollLeft;
+
     slider.classList.add('active');
-
-    startX = e.pageX - slider.offsetLeft;
-
-    scrollLeft = slider.scrollLeft;
 
     stopAutoSlide();
 
   });
-
-  slider.addEventListener('mouseup', () => {
-
-    isDown = false;
-
-    slider.classList.remove('active');
-
-    startAutoSlide();
-
-  });
-
-  slider.addEventListener('mouseleave', () => {
-
-  isDown = false;
-
-  slider.classList.remove('active');
-
-  startAutoSlide();
-
-});
 
   slider.addEventListener('mousemove', (e) => {
 
@@ -247,24 +240,65 @@ document.querySelectorAll('.portfolio-slides').forEach(slider => {
 
     e.preventDefault();
 
-    const x = e.pageX - slider.offsetLeft;
+    slider.scrollLeft = scrollStart - (e.pageX - startX);
 
-    const walk = (x - startX) * 1.5;
+  });
 
-    slider.scrollLeft = scrollLeft - walk;
+  slider.addEventListener('mouseup', (e) => {
+
+    if (!isDown) return;
+
+    isDown = false;
+
+    slider.classList.remove('active');
+
+    const diff = e.pageX - startX;
+
+    if (Math.abs(diff) > 50) {
+
+      diff < 0 ? next() : prev();
+
+    } else {
+
+      goTo(current);
+
+    }
+
+    startAutoSlide();
+
+  });
+
+  slider.addEventListener('mouseleave', () => {
+
+    if (isDown) {
+
+      isDown = false;
+
+      slider.classList.remove('active');
+
+      goTo(current);
+
+    }
+
+    startAutoSlide();
 
   });
 
 
-  /* MOBILE TOUCH */
+  /* PAUSE SAAT HOVER */
 
-  let touchStartX = 0;
+  wrapper.addEventListener('mouseenter', stopAutoSlide);
+
+  wrapper.addEventListener('mouseleave', startAutoSlide);
+
+
+  /* MOBILE TOUCH */
 
   slider.addEventListener('touchstart', (e) => {
 
-    touchStartX = e.touches[0].pageX;
+    touchStartX  = e.touches[0].clientX;
 
-    scrollLeft = slider.scrollLeft;
+    scrollStart  = slider.scrollLeft;
 
     stopAutoSlide();
 
@@ -272,19 +306,36 @@ document.querySelectorAll('.portfolio-slides').forEach(slider => {
 
   slider.addEventListener('touchmove', (e) => {
 
-    const touchX = e.touches[0].pageX;
+    const walk = touchStartX - e.touches[0].clientX;
 
-    const walk = (touchX - touchStartX) * 1.5;
-
-    slider.scrollLeft = scrollLeft - walk;
+    slider.scrollLeft = scrollStart + walk;
 
   }, { passive: true });
 
-  slider.addEventListener('touchend', () => {
+  slider.addEventListener('touchend', (e) => {
+
+    const diff = e.changedTouches[0].clientX - touchStartX;
+
+    if (Math.abs(diff) > 50) {
+
+      diff < 0 ? next() : prev();
+
+    } else {
+
+      goTo(current);
+
+    }
 
     startAutoSlide();
 
   });
+
+
+  /* INIT */
+
+  goTo(0);
+
+  startAutoSlide();
 
 });
 
