@@ -140,7 +140,7 @@ services = [
         "icon": "fas fa-user",
         "title": "Portrait & Cosplay",
         "desc": "Sesi portrait personal dan cosplay.",
-        "price": "Rp 50.000",
+        "price": "Rp 40.000",
         "unit": "/ jam",
     },
 
