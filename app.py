@@ -404,3 +404,10 @@ if __name__ == "__main__":
         port=port,
         debug=False
     )
+@app.route("/migrate")
+def migrate():
+    try:
+        db.engine.execute("ALTER TABLE portfolio_image ADD COLUMN orientation VARCHAR(20) DEFAULT 'landscape'")
+        return "Migrasi berhasil!"
+    except Exception as e:
+        return f"Error: {e}"
