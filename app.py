@@ -407,7 +407,9 @@ if __name__ == "__main__":
 @app.route("/migrate")
 def migrate():
     try:
-        db.engine.execute("ALTER TABLE portfolio_image ADD COLUMN orientation VARCHAR(20) DEFAULT 'landscape'")
+        with db.engine.connect() as conn:
+            conn.execute(db.text("ALTER TABLE portfolio_image ADD COLUMN orientation VARCHAR(20) DEFAULT 'landscape'"))
+            conn.commit()
         return "Migrasi berhasil!"
     except Exception as e:
         return f"Error: {e}"
