@@ -161,30 +161,45 @@ if (testimonialForm) {
 
 
 /* =========================
-   SUPER SMOOTH PORTFOLIO
+   ULTRA SMOOTH PORTFOLIO
 ========================= */
 
 document.querySelectorAll('.portfolio-slides').forEach(slider => {
 
-  let isDragging = false;
+  let isDown = false;
 
-  let startX = 0;
+  let startX;
 
-  let scrollLeft = 0;
+  let scrollLeft;
 
   let velocity = 0;
 
   let momentumID;
 
-  // MOMENTUM
+  // STOP MOMENTUM
+  function cancelMomentumTracking() {
 
-  function momentumLoop(){
+    cancelAnimationFrame(momentumID);
+
+  }
+
+  // START MOMENTUM
+  function beginMomentumTracking() {
+
+    cancelMomentumTracking();
+
+    momentumID = requestAnimationFrame(momentumLoop);
+
+  }
+
+  // MOMENTUM LOOP
+  function momentumLoop() {
 
     slider.scrollLeft += velocity;
 
-    velocity *= 0.92;
+    velocity *= 0.95;
 
-    if(Math.abs(velocity) > 0.5){
+    if (Math.abs(velocity) > 0.5) {
 
       momentumID = requestAnimationFrame(momentumLoop);
 
@@ -192,55 +207,126 @@ document.querySelectorAll('.portfolio-slides').forEach(slider => {
 
   }
 
-  function stopMomentum(){
-
-    cancelAnimationFrame(momentumID);
-
-  }
-
-  // DESKTOP
+  /* =========================
+     DESKTOP
+  ========================= */
 
   slider.addEventListener('mousedown', (e) => {
 
-    isDragging = true;
+    isDown = true;
 
     slider.classList.add('active');
 
-    startX = e.pageX;
+    startX = e.pageX - slider.offsetLeft;
 
     scrollLeft = slider.scrollLeft;
 
-    stopMomentum();
+    cancelMomentumTracking();
 
   });
 
-  window.addEventListener('mouseup', () => {
+  slider.addEventListener('mouseleave', () => {
 
-    if(!isDragging) return;
-
-    isDragging = false;
+    isDown = false;
 
     slider.classList.remove('active');
 
-    momentumLoop();
+  });
+
+  slider.addEventListener('mouseup', () => {
+
+    isDown = false;
+
+    slider.classList.remove('active');
+
+    beginMomentumTracking();
 
   });
 
   slider.addEventListener('mousemove', (e) => {
 
-    if(!isDragging) return;
+    if (!isDown) return;
 
     e.preventDefault();
 
-    const x = e.pageX;
+    const x = e.pageX - slider.offsetLeft;
 
-    const move = x - startX;
+    const walk = (x - startX);
 
-    const prev = slider.scrollLeft;
+    const prevScroll = slider.scrollLeft;
 
-    slider.scrollLeft = scrollLeft - move;
+    slider.scrollLeft = scrollLeft - walk;
 
-    velocity = slider.scrollLeft - prev;
+    velocity = slider.scrollLeft - prevScroll;
+
+  });
+
+
+  /* =========================
+     MOBILE TOUCH
+  ========================= */
+
+  let touchStartX = 0;
+
+  let mobileVelocity = 0;
+
+  let mobileMomentumID;
+
+  function stopMobileMomentum() {
+
+    cancelAnimationFrame(mobileMomentumID);
+
+  }
+
+  function startMobileMomentum() {
+
+    stopMobileMomentum();
+
+    mobileMomentumID = requestAnimationFrame(mobileMomentumLoop);
+
+  }
+
+  function mobileMomentumLoop() {
+
+    slider.scrollLeft += mobileVelocity;
+
+    mobileVelocity *= 0.95;
+
+    if (Math.abs(mobileVelocity) > 0.5) {
+
+      mobileMomentumID = requestAnimationFrame(mobileMomentumLoop);
+
+    }
+
+  }
+
+  slider.addEventListener('touchstart', (e) => {
+
+    touchStartX = e.touches[0].pageX;
+
+    scrollLeft = slider.scrollLeft;
+
+    stopMobileMomentum();
+
+  }, { passive: true });
+
+  slider.addEventListener('touchmove', (e) => {
+
+    const touchX = e.touches[0].pageX;
+
+    const walk = (touchX - touchStartX);
+
+    const prevScroll = slider.scrollLeft;
+
+    slider.scrollLeft = scrollLeft - walk;
+
+    mobileVelocity = slider.scrollLeft - prevScroll;
+
+  }, { passive: true });
+
+  slider.addEventListener('touchend', () => {
+
+    startMobileMomentum();
 
   });
 
