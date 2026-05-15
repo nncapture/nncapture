@@ -646,30 +646,6 @@ button { cursor: pointer; border: none; background: none; font-family: inherit; 
   color: gold;
 }
 
-/* BUTTON */
-.slide-btn{
-  position: absolute;
-  top: 50%;
-  transform: translateY(-50%);
-
-  width: 42px;
-  height: 42px;
-
-  border: none;
-  border-radius: 50%;
-
-  background: rgba(0,0,0,0.5);
-  color: white;
-
-  z-index: 10;
-
-  cursor: pointer;
-
-  backdrop-filter: blur(4px);
-
-  transition: 0.3s;
-}
-
 .slide-btn:hover{
   background: rgba(0,0,0,0.8);
 }
@@ -776,4 +752,169 @@ button { cursor: pointer; border: none; background: none; font-family: inherit; 
 
 .portfolio-slide{
   transform: none !important;
+}
+/* =========================
+   PORTFOLIO SWIPE FINAL
+========================= */
+
+.portfolio-slider{
+  position: relative;
+  overflow: hidden;
+  border-radius: 20px;
+  background: #111;
+}
+
+.portfolio-slides{
+  display: flex;
+  gap: 15px;
+
+  overflow-x: auto;
+
+  scroll-behavior: smooth;
+
+  padding: 10px;
+
+  align-items: center;
+
+  scroll-snap-type: x mandatory;
+
+  -webkit-overflow-scrolling: touch;
+
+  cursor: grab;
+
+  user-select: none;
+
+  touch-action: pan-x;
+
+  scrollbar-width: none;
+}
+
+.portfolio-slides::-webkit-scrollbar{
+  display:none;
+}
+
+.portfolio-slides.active{
+  cursor: grabbing;
+}
+
+.portfolio-slide{
+  min-width: 320px;
+
+  flex-shrink: 0;
+
+  scroll-snap-align: center;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  background: #111;
+
+  border-radius: 20px;
+
+  overflow: hidden;
+
+  user-select: none;
+}
+
+.portfolio-slide img{
+  width: auto;
+  height: auto;
+
+  max-width: 100%;
+  max-height: 420px;
+
+  object-fit: contain;
+
+  display: block;
+
+  border-radius: 20px;
+
+  pointer-events: none;
+
+  transition: transform 0.4s ease;
+}
+
+.portfolio-slide:hover img{
+  transform: scale(1.02);
+}
+
+/* OVERLAY */
+
+.portfolio-overlay{
+  position: absolute;
+  inset: 0;
+
+  background: linear-gradient(
+    to top,
+    rgba(0,0,0,0.82),
+    rgba(0,0,0,0.15),
+    transparent
+  );
+
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+
+  padding: 2rem;
+
+  opacity: 0;
+
+  transition: 0.4s ease;
+
+  border-radius: 20px;
+
+  pointer-events: none;
+}
+
+.portfolio-slider:hover .portfolio-overlay{
+  opacity: 1;
+}
+
+.portfolio-overlay h3{
+  font-size: 2rem;
+  margin-bottom: 10px;
+}
+
+.portfolio-overlay p{
+  max-width: 600px;
+  color: rgba(255,255,255,0.8);
+}
+
+.portfolio-count{
+  display: inline-block;
+  margin-top: 10px;
+  font-size: 13px;
+  color: gold;
+}
+
+/* MOBILE */
+
+@media(max-width:768px){
+
+  .portfolio-slide{
+    min-width: 100%;
+  }
+
+  .portfolio-slide img{
+    width: 100%;
+    max-height: 350px;
+    object-fit: contain;
+  }
+
+  .portfolio-overlay{
+    opacity: 1;
+
+    background: linear-gradient(
+      to top,
+      rgba(0,0,0,0.9),
+      rgba(0,0,0,0.2),
+      transparent
+    );
+  }
+
+  .portfolio-overlay h3{
+    font-size: 1.4rem;
+  }
+
 }

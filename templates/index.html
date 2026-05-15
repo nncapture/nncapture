@@ -2,7 +2,10 @@
 <html lang="id">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta 
+  name="viewport" 
+  content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"
+/>
   <title>N&N Capture — Photography Bandar Lampung</title>
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400&family=Jost:wght@300;400;500&display=swap" rel="stylesheet" />
@@ -223,68 +226,69 @@
     </div>
 
     <!-- GRID -->
-    <div
-      class="portfolio-grid"
-      id="portfolioGrid"
-    >
+<div
+  class="portfolio-grid"
+  id="portfolioGrid"
+>
 
-      {% for item in portfolios %}
+  {% for item in portfolios %}
 
-      <div
-        class="portfolio-item"
-        data-category="{{ item.category }}"
-      >
+  <div
+    class="portfolio-item"
+    data-category="{{ item.category }}"
+  >
 
-        <div class="portfolio-slider">
-          
-          <!-- SLIDES -->
-          <div class="portfolio-slides">
+    <div class="portfolio-slider">
 
-            {% for image in item.images %}
+      <!-- SLIDES -->
+      <div class="portfolio-slides">
 
-            <div class="portfolio-slide">
+        {% for image in item.images %}
 
-              <img
-                class="portfolio-photo"
-                src="{{ url_for('static', filename='uploads/' + image.image) }}"
-                alt="{{ item.title }}"
-                loading="lazy"
-              >
+        <div class="portfolio-slide">
 
-            </div>
-
-            {% endfor %}
-
-          </div>
-
-          <!-- OVERLAY -->
-          <div class="portfolio-overlay">
-
-            <p class="portfolio-cat">
-              {{ item.category|capitalize }}
-            </p>
-
-            <h3>
-              {{ item.title }}
-            </h3>
-
-            <p>
-              {{ item.description }}
-            </p>
-
-            <span class="portfolio-count">
-              {{ item.images|length }} Foto
-            </span>
-
-          </div>
+          <img
+            class="portfolio-photo"
+            src="{{ url_for('static', filename='uploads/' + image.image) }}"
+            alt="{{ item.title }}"
+            loading="lazy"
+            draggable="false"
+          >
 
         </div>
 
+        {% endfor %}
+
       </div>
 
-      {% endfor %}
+      <!-- OVERLAY -->
+      <div class="portfolio-overlay">
+
+        <p class="portfolio-cat">
+          {{ item.category|capitalize }}
+        </p>
+
+        <h3>
+          {{ item.title }}
+        </h3>
+
+        <p>
+          {{ item.description }}
+        </p>
+
+        <span class="portfolio-count">
+          {{ item.images|length }} Foto
+        </span>
+
+      </div>
 
     </div>
+
+  </div>
+
+  {% endfor %}
+
+</div>
 
   </div>
 
