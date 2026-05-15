@@ -161,7 +161,7 @@ if (testimonialForm) {
 
 
 /* =========================
-   ULTRA SMOOTH PORTFOLIO
+   PORTFOLIO SLIDER
 ========================= */
 
 document.querySelectorAll('.portfolio-slides').forEach(slider => {
@@ -170,14 +170,9 @@ document.querySelectorAll('.portfolio-slides').forEach(slider => {
   let startX;
   let scrollLeft;
 
-  let velocity = 0;
-  let momentumID;
-
   let autoSlide;
 
-  /* =========================
-     AUTO SLIDE
-  ========================= */
+  /* AUTO SLIDE */
 
   function startAutoSlide() {
 
@@ -189,10 +184,12 @@ document.querySelectorAll('.portfolio-slides').forEach(slider => {
 
       // RESET KE AWAL
       if (
-        slider.scrollLeft + slider.clientWidth >=
-        slider.scrollWidth - 2
+        slider.scrollLeft >=
+        slider.scrollWidth - slider.clientWidth
       ) {
+
         slider.scrollLeft = 0;
+
       }
 
     }, 15);
@@ -207,41 +204,8 @@ document.querySelectorAll('.portfolio-slides').forEach(slider => {
 
   startAutoSlide();
 
-  /* =========================
-     MOMENTUM DESKTOP
-  ========================= */
 
-  function cancelMomentumTracking() {
-
-    cancelAnimationFrame(momentumID);
-
-  }
-
-  function beginMomentumTracking() {
-
-    cancelMomentumTracking();
-
-    momentumID = requestAnimationFrame(momentumLoop);
-
-  }
-
-  function momentumLoop() {
-
-    slider.scrollLeft += velocity;
-
-    velocity *= 0.95;
-
-    if (Math.abs(velocity) > 0.5) {
-
-      momentumID = requestAnimationFrame(momentumLoop);
-
-    }
-
-  }
-
-  /* =========================
-     DESKTOP DRAG
-  ========================= */
+  /* DESKTOP DRAG */
 
   slider.addEventListener('mousedown', (e) => {
 
@@ -253,19 +217,7 @@ document.querySelectorAll('.portfolio-slides').forEach(slider => {
 
     scrollLeft = slider.scrollLeft;
 
-    cancelMomentumTracking();
-
     stopAutoSlide();
-
-  });
-
-  slider.addEventListener('mouseleave', () => {
-
-    isDown = false;
-
-    slider.classList.remove('active');
-
-    startAutoSlide();
 
   });
 
@@ -275,9 +227,15 @@ document.querySelectorAll('.portfolio-slides').forEach(slider => {
 
     slider.classList.remove('active');
 
-    beginMomentumTracking();
-
     startAutoSlide();
+
+  });
+
+  slider.addEventListener('mouseleave', () => {
+
+    isDown = false;
+
+    slider.classList.remove('active');
 
   });
 
@@ -289,61 +247,22 @@ document.querySelectorAll('.portfolio-slides').forEach(slider => {
 
     const x = e.pageX - slider.offsetLeft;
 
-    const walk = (x - startX);
-
-    const prevScroll = slider.scrollLeft;
+    const walk = (x - startX) * 1.5;
 
     slider.scrollLeft = scrollLeft - walk;
 
-    velocity = slider.scrollLeft - prevScroll;
-
   });
 
-  /* =========================
-     MOBILE TOUCH
-  ========================= */
+
+  /* MOBILE TOUCH */
 
   let touchStartX = 0;
-
-  let mobileVelocity = 0;
-
-  let mobileMomentumID;
-
-  function stopMobileMomentum() {
-
-    cancelAnimationFrame(mobileMomentumID);
-
-  }
-
-  function startMobileMomentum() {
-
-    stopMobileMomentum();
-
-    mobileMomentumID = requestAnimationFrame(mobileMomentumLoop);
-
-  }
-
-  function mobileMomentumLoop() {
-
-    slider.scrollLeft += mobileVelocity;
-
-    mobileVelocity *= 0.95;
-
-    if (Math.abs(mobileVelocity) > 0.5) {
-
-      mobileMomentumID = requestAnimationFrame(mobileMomentumLoop);
-
-    }
-
-  }
 
   slider.addEventListener('touchstart', (e) => {
 
     touchStartX = e.touches[0].pageX;
 
     scrollLeft = slider.scrollLeft;
-
-    stopMobileMomentum();
 
     stopAutoSlide();
 
@@ -353,19 +272,13 @@ document.querySelectorAll('.portfolio-slides').forEach(slider => {
 
     const touchX = e.touches[0].pageX;
 
-    const walk = (touchX - touchStartX);
-
-    const prevScroll = slider.scrollLeft;
+    const walk = (touchX - touchStartX) * 1.5;
 
     slider.scrollLeft = scrollLeft - walk;
-
-    mobileVelocity = slider.scrollLeft - prevScroll;
 
   }, { passive: true });
 
   slider.addEventListener('touchend', () => {
-
-    startMobileMomentum();
 
     startAutoSlide();
 
