@@ -167,23 +167,56 @@ if (testimonialForm) {
 document.querySelectorAll('.portfolio-slides').forEach(slider => {
 
   let isDown = false;
-
   let startX;
-
   let scrollLeft;
 
   let velocity = 0;
-
   let momentumID;
 
-  // STOP MOMENTUM
+  let autoSlide;
+
+  /* =========================
+     AUTO SLIDE
+  ========================= */
+
+  function startAutoSlide() {
+
+    stopAutoSlide();
+
+    autoSlide = setInterval(() => {
+
+      slider.scrollLeft += 1;
+
+      // RESET KE AWAL
+      if (
+        slider.scrollLeft + slider.clientWidth >=
+        slider.scrollWidth - 2
+      ) {
+        slider.scrollLeft = 0;
+      }
+
+    }, 15);
+
+  }
+
+  function stopAutoSlide() {
+
+    clearInterval(autoSlide);
+
+  }
+
+  startAutoSlide();
+
+  /* =========================
+     MOMENTUM DESKTOP
+  ========================= */
+
   function cancelMomentumTracking() {
 
     cancelAnimationFrame(momentumID);
 
   }
 
-  // START MOMENTUM
   function beginMomentumTracking() {
 
     cancelMomentumTracking();
@@ -192,7 +225,6 @@ document.querySelectorAll('.portfolio-slides').forEach(slider => {
 
   }
 
-  // MOMENTUM LOOP
   function momentumLoop() {
 
     slider.scrollLeft += velocity;
@@ -208,7 +240,7 @@ document.querySelectorAll('.portfolio-slides').forEach(slider => {
   }
 
   /* =========================
-     DESKTOP
+     DESKTOP DRAG
   ========================= */
 
   slider.addEventListener('mousedown', (e) => {
@@ -223,6 +255,8 @@ document.querySelectorAll('.portfolio-slides').forEach(slider => {
 
     cancelMomentumTracking();
 
+    stopAutoSlide();
+
   });
 
   slider.addEventListener('mouseleave', () => {
@@ -230,6 +264,8 @@ document.querySelectorAll('.portfolio-slides').forEach(slider => {
     isDown = false;
 
     slider.classList.remove('active');
+
+    startAutoSlide();
 
   });
 
@@ -240,6 +276,8 @@ document.querySelectorAll('.portfolio-slides').forEach(slider => {
     slider.classList.remove('active');
 
     beginMomentumTracking();
+
+    startAutoSlide();
 
   });
 
@@ -260,7 +298,6 @@ document.querySelectorAll('.portfolio-slides').forEach(slider => {
     velocity = slider.scrollLeft - prevScroll;
 
   });
-
 
   /* =========================
      MOBILE TOUCH
@@ -308,6 +345,8 @@ document.querySelectorAll('.portfolio-slides').forEach(slider => {
 
     stopMobileMomentum();
 
+    stopAutoSlide();
+
   }, { passive: true });
 
   slider.addEventListener('touchmove', (e) => {
@@ -328,27 +367,49 @@ document.querySelectorAll('.portfolio-slides').forEach(slider => {
 
     startMobileMomentum();
 
+    startAutoSlide();
+
   });
 
 });
-// AUTO DETECT IMAGE ORIENTATION
+
+
+/* =========================
+   AUTO DETECT IMAGE ORIENTATION
+========================= */
 
 document.querySelectorAll('.portfolio-slide img').forEach(img => {
 
-  img.onload = () => {
+  function setOrientation() {
 
     const slide = img.closest('.portfolio-slide');
+
+    if (!slide) return;
 
     if (img.naturalHeight > img.naturalWidth) {
 
       slide.classList.add('portrait');
 
+      slide.classList.remove('landscape');
+
     } else {
 
       slide.classList.add('landscape');
 
+      slide.classList.remove('portrait');
+
     }
 
-  };
+  }
+
+  if (img.complete) {
+
+    setOrientation();
+
+  } else {
+
+    img.onload = setOrientation;
+
+  }
 
 });
