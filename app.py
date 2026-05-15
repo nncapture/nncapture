@@ -11,12 +11,22 @@ app.secret_key = os.environ.get("SECRET_KEY", "nncapture_secret_key")
 
 # ======================
 # DATABASE
+# FIX: pakai PostgreSQL kalau ada DATABASE_URL, fallback SQLite
 # ======================
 
-basedir = os.path.abspath(os.path.dirname(__file__))
+database_url = os.environ.get("DATABASE_URL", "")
 
-app.config['SQLALCHEMY_DATABASE_URI'] = \
-    'sqlite:///' + os.path.join(basedir, 'database.db')
+# Render kasih URL dengan prefix postgres://, SQLAlchemy butuh postgresql://
+if database_url.startswith("postgres://"):
+    database_url = database_url.replace("postgres://", "postgresql://", 1)
+
+if database_url:
+    app.config['SQLALCHEMY_DATABASE_URI'] = database_url
+else:
+    basedir = os.path.abspath(os.path.dirname(__file__))
+    app.config['SQLALCHEMY_DATABASE_URI'] = \
+        'sqlite:///' + os.path.join(basedir, 'database.db')
+
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 
 db = SQLAlchemy(app)
@@ -33,7 +43,6 @@ os.makedirs(UPLOAD_FOLDER, exist_ok=True)
 
 # ======================
 # ALLOWED EXTENSIONS
-# FIX: hanya gambar yang boleh diupload
 # ======================
 
 ALLOWED_EXTENSIONS = {'jpg', 'jpeg', 'png', 'webp', 'gif'}
@@ -46,8 +55,6 @@ def allowed_file(filename):
 
 # ======================
 # ADMIN CREDENTIALS
-# FIX: ambil dari environment variable, fallback ke default
-# Ganti via: export ADMIN_USERNAME=xxx ADMIN_PASSWORD=xxx
 # ======================
 
 ADMIN_USERNAME = os.environ.get("ADMIN_USERNAME", "admin")
@@ -113,7 +120,6 @@ class PortfolioImage(db.Model):
         db.String(300)
     )
 
-    # FIX: tambah kolom orientation supaya portrait/landscape jalan di HTML
     orientation = db.Column(
         db.String(20),
         default='landscape'
@@ -188,7 +194,6 @@ def index():
 
 # ======================
 # LOGIN
-# FIX: pakai variabel dari env bukan hardcoded
 # ======================
 
 @app.route("/login", methods=["GET", "POST"])
@@ -286,7 +291,6 @@ def delete_testimonial(id):
 
 # ======================
 # ADD PORTFOLIO
-# FIX: validasi ekstensi + deteksi orientasi otomatis
 # ======================
 
 @app.route("/add-portfolio", methods=["POST"])
@@ -304,7 +308,6 @@ def add_portfolio():
     if not title or not files:
         return redirect("/admin")
 
-    # CREATE PORTFOLIO
     portfolio = Portfolio(
         title=title,
         category=category,
@@ -315,19 +318,16 @@ def add_portfolio():
 
     db.session.commit()
 
-    # SAVE MULTIPLE IMAGES
     for file in files:
 
         if file.filename == "":
             continue
 
-        # FIX: tolak file yang bukan gambar
         if not allowed_file(file.filename):
             continue
 
         ext = file.filename.rsplit('.', 1)[1].lower()
 
-        # FIX: pakai uuid supaya nama file ga bentrok
         filename = f"{uuid.uuid4().hex}.{ext}"
 
         filepath = os.path.join(
@@ -337,7 +337,6 @@ def add_portfolio():
 
         file.save(filepath)
 
-        # FIX: deteksi orientasi dari dimensi gambar
         try:
             with Image.open(filepath) as img:
                 w, h = img.size
@@ -369,7 +368,6 @@ def delete_portfolio(id):
 
     portfolio = Portfolio.query.get_or_404(id)
 
-    # DELETE IMAGE FILES
     for img in portfolio.images:
 
         image_path = os.path.join(
@@ -387,18 +385,11 @@ def delete_portfolio(id):
     return redirect("/admin")
 
 # ======================
-# CREATE DATABASE + MIGRATE
+# CREATE DATABASE
 # ======================
 
 with app.app_context():
     db.create_all()
-    # Auto migrasi kolom orientation kalau belum ada
-    try:
-        with db.engine.connect() as conn:
-            conn.execute(db.text("ALTER TABLE portfolio_image ADD COLUMN orientation VARCHAR(20) DEFAULT 'landscape'"))
-            conn.commit()
-    except Exception:
-        pass  # kolom sudah ada, skip
 
 # ======================
 # RUN
