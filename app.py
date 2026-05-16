@@ -289,6 +289,17 @@ def delete_portfolio(id):
     db.session.commit()
     return redirect("/admin")
 
+@app.route("/migrate")
+def migrate():
+    try:
+        with db.engine.connect() as conn:
+            conn.execute(db.text("ALTER TABLE portfolio_image ADD COLUMN public_id VARCHAR(300)"))
+            conn.execute(db.text("ALTER TABLE portfolio_image ALTER COLUMN image TYPE VARCHAR(500)"))
+            conn.commit()
+        return "Migrasi berhasil!"
+    except Exception as e:
+        return f"Error: {e}"
+
 # ======================
 # CREATE DATABASE
 # ======================
