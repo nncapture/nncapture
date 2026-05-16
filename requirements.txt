@@ -5,3 +5,4 @@ numpy
 flask_sqlalchemy
 Pillow
 psycopg2-binary
+cloudinary

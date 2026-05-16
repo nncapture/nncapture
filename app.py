@@ -1,9 +1,8 @@
 from flask import Flask, render_template, request, redirect, session
 from flask_sqlalchemy import SQLAlchemy
-from werkzeug.utils import secure_filename
-from PIL import Image
+import cloudinary
+import cloudinary.uploader
 import os
-import uuid
 
 app = Flask(__name__)
 
@@ -11,12 +10,10 @@ app.secret_key = os.environ.get("SECRET_KEY", "nncapture_secret_key")
 
 # ======================
 # DATABASE
-# FIX: pakai PostgreSQL kalau ada DATABASE_URL, fallback SQLite
 # ======================
 
 database_url = os.environ.get("DATABASE_URL", "")
 
-# Render kasih URL dengan prefix postgres://, SQLAlchemy butuh postgresql://
 if database_url.startswith("postgres://"):
     database_url = database_url.replace("postgres://", "postgresql://", 1)
 
@@ -32,14 +29,15 @@ app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 db = SQLAlchemy(app)
 
 # ======================
-# UPLOAD FOLDER
+# CLOUDINARY
 # ======================
 
-UPLOAD_FOLDER = 'static/uploads'
-
-app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
-
-os.makedirs(UPLOAD_FOLDER, exist_ok=True)
+cloudinary.config(
+    cloud_name = os.environ.get("CLOUDINARY_CLOUD_NAME", "dfealk8kj"),
+    api_key     = os.environ.get("CLOUDINARY_API_KEY", "148458875545128"),
+    api_secret  = os.environ.get("CLOUDINARY_API_SECRET", "jzHCfYa8oBwcwFCZ541rpeXSfDs"),
+    secure      = True
+)
 
 # ======================
 # ALLOWED EXTENSIONS
@@ -66,41 +64,17 @@ ADMIN_PASSWORD = os.environ.get("ADMIN_PASSWORD", "admin123")
 
 class Testimonial(db.Model):
 
-    id = db.Column(
-        db.Integer,
-        primary_key=True
-    )
-
-    name = db.Column(
-        db.String(100),
-        nullable=False
-    )
-
-    message = db.Column(
-        db.Text,
-        nullable=False
-    )
+    id = db.Column(db.Integer, primary_key=True)
+    name = db.Column(db.String(100), nullable=False)
+    message = db.Column(db.Text, nullable=False)
 
 
 class Portfolio(db.Model):
 
-    id = db.Column(
-        db.Integer,
-        primary_key=True
-    )
-
-    title = db.Column(
-        db.String(200)
-    )
-
-    category = db.Column(
-        db.String(100)
-    )
-
-    description = db.Column(
-        db.Text
-    )
-
+    id = db.Column(db.Integer, primary_key=True)
+    title = db.Column(db.String(200))
+    category = db.Column(db.String(100))
+    description = db.Column(db.Text)
     images = db.relationship(
         'PortfolioImage',
         backref='portfolio',
@@ -111,31 +85,22 @@ class Portfolio(db.Model):
 
 class PortfolioImage(db.Model):
 
-    id = db.Column(
-        db.Integer,
-        primary_key=True
-    )
+    id = db.Column(db.Integer, primary_key=True)
 
-    image = db.Column(
-        db.String(300)
-    )
+    # sekarang simpan URL cloudinary, bukan nama file lokal
+    image = db.Column(db.String(500))
 
-    orientation = db.Column(
-        db.String(20),
-        default='landscape'
-    )
+    # cloudinary public_id untuk delete
+    public_id = db.Column(db.String(300))
 
-    portfolio_id = db.Column(
-        db.Integer,
-        db.ForeignKey('portfolio.id')
-    )
+    orientation = db.Column(db.String(20), default='landscape')
+    portfolio_id = db.Column(db.Integer, db.ForeignKey('portfolio.id'))
 
 # ======================
 # SERVICES
 # ======================
 
 services = [
-
     {
         "icon": "fas fa-user",
         "title": "Portrait & Cosplay",
@@ -143,7 +108,6 @@ services = [
         "price": "Rp 40.000",
         "unit": "/ jam",
     },
-
     {
         "icon": "fas fa-id-card",
         "title": "Headshot",
@@ -151,7 +115,6 @@ services = [
         "price": "Rp 30.000",
         "unit": "/ orang",
     },
-
     {
         "icon": "fas fa-running",
         "title": "Sports Photography",
@@ -159,7 +122,6 @@ services = [
         "price": "Mulai Rp 150.000",
         "unit": "/ sesi",
     },
-
     {
         "icon": "fas fa-camera",
         "title": "Event Documentation",
@@ -167,7 +129,6 @@ services = [
         "price": "Mulai Rp 300.000",
         "unit": "/ sesi",
     },
-
 ]
 
 # ======================
@@ -176,15 +137,8 @@ services = [
 
 @app.route("/")
 def index():
-
-    testimonials = Testimonial.query.order_by(
-        Testimonial.id.desc()
-    ).all()
-
-    portfolios = Portfolio.query.order_by(
-        Portfolio.id.desc()
-    ).all()
-
+    testimonials = Testimonial.query.order_by(Testimonial.id.desc()).all()
+    portfolios = Portfolio.query.order_by(Portfolio.id.desc()).all()
     return render_template(
         "index.html",
         testimonials=testimonials,
@@ -198,18 +152,12 @@ def index():
 
 @app.route("/login", methods=["GET", "POST"])
 def login():
-
     if request.method == "POST":
-
         username = request.form.get("username")
         password = request.form.get("password")
-
         if username == ADMIN_USERNAME and password == ADMIN_PASSWORD:
-
             session["admin"] = True
-
             return redirect("/admin")
-
     return render_template("login.html")
 
 # ======================
@@ -218,9 +166,7 @@ def login():
 
 @app.route("/logout")
 def logout():
-
     session.clear()
-
     return redirect("/")
 
 # ======================
@@ -229,23 +175,11 @@ def logout():
 
 @app.route("/admin")
 def admin():
-
     if not session.get("admin"):
         return redirect("/login")
-
-    testimonials = Testimonial.query.order_by(
-        Testimonial.id.desc()
-    ).all()
-
-    portfolios = Portfolio.query.order_by(
-        Portfolio.id.desc()
-    ).all()
-
-    return render_template(
-        "admin.html",
-        testimonials=testimonials,
-        portfolios=portfolios
-    )
+    testimonials = Testimonial.query.order_by(Testimonial.id.desc()).all()
+    portfolios = Portfolio.query.order_by(Portfolio.id.desc()).all()
+    return render_template("admin.html", testimonials=testimonials, portfolios=portfolios)
 
 # ======================
 # ADD TESTIMONIAL
@@ -253,22 +187,13 @@ def admin():
 
 @app.route("/add-testimonial", methods=["POST"])
 def add_testimonial():
-
     name = request.form.get("name")
     message = request.form.get("message")
-
     if not name or not message:
         return redirect("/")
-
-    testimonial = Testimonial(
-        name=name,
-        message=message
-    )
-
+    testimonial = Testimonial(name=name, message=message)
     db.session.add(testimonial)
-
     db.session.commit()
-
     return redirect("/#testimonials")
 
 # ======================
@@ -277,111 +202,91 @@ def add_testimonial():
 
 @app.route("/delete-testimonial/<int:id>")
 def delete_testimonial(id):
-
     if not session.get("admin"):
         return redirect("/login")
-
     testimonial = Testimonial.query.get_or_404(id)
-
     db.session.delete(testimonial)
-
     db.session.commit()
-
     return redirect("/admin")
 
 # ======================
 # ADD PORTFOLIO
+# upload ke Cloudinary, simpan URL
 # ======================
 
 @app.route("/add-portfolio", methods=["POST"])
 def add_portfolio():
-
     if not session.get("admin"):
         return redirect("/login")
 
     title = request.form.get("title")
     category = request.form.get("category")
     description = request.form.get("description")
-
     files = request.files.getlist("images")
 
     if not title or not files:
         return redirect("/admin")
 
-    portfolio = Portfolio(
-        title=title,
-        category=category,
-        description=description
-    )
-
+    portfolio = Portfolio(title=title, category=category, description=description)
     db.session.add(portfolio)
-
     db.session.commit()
 
     for file in files:
-
         if file.filename == "":
             continue
-
         if not allowed_file(file.filename):
             continue
 
-        ext = file.filename.rsplit('.', 1)[1].lower()
-
-        filename = f"{uuid.uuid4().hex}.{ext}"
-
-        filepath = os.path.join(
-            app.config['UPLOAD_FOLDER'],
-            filename
-        )
-
-        file.save(filepath)
-
         try:
-            with Image.open(filepath) as img:
-                w, h = img.size
-                orientation = 'portrait' if h > w else 'landscape'
-        except Exception:
-            orientation = 'landscape'
+            # upload langsung ke Cloudinary dari memory
+            result = cloudinary.uploader.upload(
+                file,
+                folder="nncapture",
+                resource_type="image"
+            )
 
-        image = PortfolioImage(
-            image=filename,
-            orientation=orientation,
-            portfolio_id=portfolio.id
-        )
+            url        = result.get("secure_url")
+            public_id  = result.get("public_id")
+            width      = result.get("width", 1)
+            height     = result.get("height", 1)
+            orientation = 'portrait' if height > width else 'landscape'
 
-        db.session.add(image)
+            image = PortfolioImage(
+                image=url,
+                public_id=public_id,
+                orientation=orientation,
+                portfolio_id=portfolio.id
+            )
+            db.session.add(image)
+
+        except Exception as e:
+            print(f"Upload error: {e}")
+            continue
 
     db.session.commit()
-
     return redirect("/admin")
 
 # ======================
 # DELETE PORTFOLIO
+# hapus dari Cloudinary juga
 # ======================
 
 @app.route("/delete-portfolio/<int:id>")
 def delete_portfolio(id):
-
     if not session.get("admin"):
         return redirect("/login")
 
     portfolio = Portfolio.query.get_or_404(id)
 
     for img in portfolio.images:
-
-        image_path = os.path.join(
-            app.config['UPLOAD_FOLDER'],
-            img.image
-        )
-
-        if os.path.exists(image_path):
-            os.remove(image_path)
+        if img.public_id:
+            try:
+                cloudinary.uploader.destroy(img.public_id)
+            except Exception as e:
+                print(f"Delete error: {e}")
 
     db.session.delete(portfolio)
-
     db.session.commit()
-
     return redirect("/admin")
 
 # ======================
@@ -397,8 +302,4 @@ with app.app_context():
 
 if __name__ == "__main__":
     port = int(os.environ.get("PORT", 10000))
-    app.run(
-        host="0.0.0.0",
-        port=port,
-        debug=False
-    )
+    app.run(host="0.0.0.0", port=port, debug=False)
