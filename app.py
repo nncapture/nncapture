@@ -33,7 +33,7 @@ db = SQLAlchemy(app)
 # ======================
 
 cloudinary.config(
-    cloud_name = os.environ.get("CLOUDINARY_CLOUD_NAME", "dfealk8kj"),
+    cloud_name = os.environ.get("CLOUDINARY_CLOUD_NAME", "dfeaik6kj"),
     api_key     = os.environ.get("CLOUDINARY_API_KEY", "148458875545128"),
     api_secret  = os.environ.get("CLOUDINARY_API_SECRET", "jzHCfYa8oBwcwFCZ541rpeXSfDs"),
     secure      = True
