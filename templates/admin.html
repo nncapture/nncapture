@@ -299,7 +299,7 @@
         {% for image in p.images %}
 
         <img
-          src="{{ url_for('static', filename='uploads/' + image.image) }}"
+          src="{{ image.image }}
         >
 
         {% endfor %}
